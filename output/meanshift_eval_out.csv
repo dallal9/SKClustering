@@ -1,0 +1,1 @@
+dataset	silhouette_score	calinski_harabasz_score	davies_bouldin_score	SSE	nSSE	cluster_all	bin_seeding	n_jobs
