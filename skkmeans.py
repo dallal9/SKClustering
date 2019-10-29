@@ -10,7 +10,7 @@ csv_file = "./output/kmeans_eval_out_2.csv"
 
 count_all=1
 
-n_clusters_r=range(2, 101)
+n_clusters_r=range(2, 20)
 count_all*=len(n_clusters_r)
 
 init_r=['k-means++', 'random']
@@ -27,17 +27,32 @@ count_all*=len(n_init_r)
 
 count=0
 
+# config = {"n_clusters": n_clusters_r[0], "init": init_r[0], "max_iter": max_iter_r[0], "n_init": n_init_r[0], "algorithm": algorithm_r[0]}
+# s = evaluate(estimator, config)
+# s.run_all()
+# out = s.res
+# d = {}
+# for key in out:
+#       for dataset in out.keys():
+#             d0 = {"dataset": dataset}
+#             d1 = out[dataset]
+#             d0.update(d1)
+
+#             d0.update(config)
+#             print(d0)
+
 for n_clusters in n_clusters_r:
-      for init in init_r:
-            for max_iter in max_iter_r:
-                  for algorithm in algorithm_r:
-                        for n_init in n_init_r:
-                              config = {"n_clusters": n_clusters, "init": init,
-                                    "max_iter": max_iter, "n_init": n_init, "algorithm": algorithm}
+#      for init in init_r:
+#            for max_iter in max_iter_r:
+#                  for algorithm in algorithm_r:
+#                        for n_init in n_init_r:
+                              config = {"n_clusters": n_clusters, "init": init_r[0],
+                                    "max_iter": max_iter_r[0], "n_init": n_init_r[0], "algorithm": algorithm_r[0]}
                               s = evaluate(estimator, config)
                               s.run_all()
                               out = s.res
                               d = {}
+
                               # for key in out:
                               for dataset in out.keys():
                                     d0 = {"dataset": dataset}

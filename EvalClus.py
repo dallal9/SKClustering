@@ -108,14 +108,14 @@ class evaluate:
             if sample_size<100:
                   sample_size=len(self.data)
             Metrics={}
-            #Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
-            #Metrics["calinski_harabasz_score"]= metrics.calinski_harabasz_score(self.data,  self.estimator.labels_) 
-            #Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
+            Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
+            Metrics["calinski_harabasz_score"]= metrics.calinski_harabaz_score(self.data,  self.estimator.labels_) 
+            Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
             if self.estimator_label.lower()=="kmeans":
-                  araujo = metric(self.data, self.estimator.labels_)
+                  araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
                   Metrics["IIndex"] =  araujo.IIndex()
-                 #Metrics["SSE"]=self.estimator.inertia_
-                  #Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
+                  Metrics["SSE"]=self.estimator.inertia_
+                  Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
             elif self.estimator_label.lower()=="affinityprop":
                   Metrics["n_clusters"] = len(self.estimator.cluster_centers_indices_)
                   
