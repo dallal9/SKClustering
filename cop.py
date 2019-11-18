@@ -6,40 +6,49 @@ from sklearn.cluster import KMeans
 
 
 
-class metric:
+class cop:
     def __init__(self, X, Y, centroids):
         self.X = X
         self.Y = Y
+        self.len = len(np.bincount(Y)) #Length of clusters
         self.centroids = centroids
     
-    def EConstant(self):
-        km = KMeans(n_clusters=1).fit(self.X)
-        
-        e_constant = []
-        labels_ = km.labels_
-        cluster_k_const = [self.X[labels_== k] for k in range(km.n_clusters)] 
-        
-        sum_k = 0
+    def cohesion(self):
+        cluster = [self.X[self.Y == k] for k in range(self.len)]
+        distance = 0
 
-        for i,k in enumerate(cluster_k_const):
+        for i,k in enumerate(cluster):
             for r in [k]:
                 df = pd.DataFrame(r)
                 for index, row in df.iterrows():
-                    sum_k += euclidean(row, km.cluster_centers_[0])
-                    #sum_k += euclidean([row[0], row[1]], km.cluster_centers_[0])
-                e_constant.append(sum_k)
+                    distance += euclidean(row, self.centroids[i])
 
-        return e_constant[0]
+        return distance * (1/self.len)
+    
+    def separation(self):
         
+        cluster = [self.X[self.Y == k] for k in range(self.len)]
+        pair_distances = []
 
-    def IIndex(self):
+        #Review separation computation: MAX & MINs
+        for i,k in enumerate(cluster):
+            for r in [k]:
+                df = pd.DataFrame(r)
+                for index, row in df.iterrows():
+                    for alt_index, alt_row in df.iterrows():
+                        if row != alt_row:
+                            pair_distances.append(euclidean(row, alt_row))
+    
+    return (1/self.len)
+
+
+    def COPScore(self):
         
         n_clusters = len(np.bincount(self.Y)) #Length of clusters
         
         cluster_k = [self.X[self.Y == k] for k in range(n_clusters)]
-        e_constant = self.EConstant()
 
-        #print("E_Constant: ", e_constant)
+       
         
         ek = []
         sum = 0
@@ -53,7 +62,7 @@ class metric:
                 ek.append(sum)
                 sum = 0
 
-        e_ratio = e_constant/np.sum(ek)
+        e_ratio # = e_constant/np.sum(ek)
 
         power = 0.5
         pair_distances = []
