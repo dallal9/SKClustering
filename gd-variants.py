@@ -5,8 +5,6 @@ from scipy.spatial.distance import euclidean
 from sklearn.cluster import KMeans
 
 
-#gD33, gD43
-
 class gdvar:
     def __init__(self, X, Y, centroids):
         self.X = X
@@ -14,7 +12,7 @@ class gdvar:
         self.len = len(np.bincount(Y)) #Length of clusters
         self.centroids = centroids
     
-    def cohesion(self, type):
+    def separation(self, type):
 
         cluster = [self.X[self.Y == k] for k in range(self.len)]
         distance = 0 # distance between points and centroid for all clusters
@@ -28,59 +26,40 @@ class gdvar:
         if type == 3 :
             return (2/self.len) * distance
     
-    def separation(self, type):
+    def cohesion(self, type):
 
        
-
         if type == 3:
+            
+            distance = 0
+            cluster_size = 0
+            cluster_k = [self.X[self.Y == k] for k in range(self.len)]
 
-            return 0
+            for i,k in enumerate(cluster_k):
+                for r in [k]:
+                    df = pd.DataFrame(r)
+                    cluster_size += len(df)
+                    for a,b in enumerate(cluster_k):
+                        for c in [b]:
+                            if i != a:
+                                df_2 = pd.DataFrame(c)
+                                for row in df.itertuples():
+                                    for row_2 in df_2.itertuples():
+                                        distance += euclidean(row, row_2)
+            return (1/cluster_size) * distance
+
         elif type == 4:
-             pair_distances = []
+            pair_distances = []
 
             for i in range(self.len):
                 for j in range(self.len):
                     if j != i:
                         pair_distances.append(euclidean(self.centroids[i], self.centroids[j]))
-            
             return pair_distances
 
-            
 
+    def gD33(self):
+        return self.cohesion(3)/self.separation(3)
     
-    
-
-
-    def COPScore(self):
-        
-        n_clusters = len(np.bincount(self.Y)) #Length of clusters
-        
-        cluster_k = [self.X[self.Y == k] for k in range(n_clusters)]
-
-       
-        
-        ek = []
-        sum = 0
-
-        for i,k in enumerate(cluster_k):
-            for r in [k]:
-                df = pd.DataFrame(r)
-                for index, row in df.iterrows():
-                    sum += euclidean(row, self.centroids[i])
-                    #sum += euclidean([row[0], row[1]], self.centroids[i])
-                ek.append(sum)
-                sum = 0
-
-        e_ratio # = e_constant/np.sum(ek)
-
-        power = 0.5
-        pair_distances = []
-
-        for i in range(n_clusters):
-            for j in range(n_clusters):
-                if j != i:
-                    pair_distances.append(euclidean(self.centroids[i], self.centroids[j]))
-        
-        index = ((1/float(n_clusters)) * e_ratio * np.max(pair_distances))**power
-
-        return index
+    def gD43(self):
+        return self.cohesion(4)/self.separation(3)

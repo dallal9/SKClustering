@@ -113,8 +113,8 @@ class evaluate:
             Metrics["calinski_harabasz_score"]= metrics.calinski_harabaz_score(self.data,  self.estimator.labels_) 
             Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
             if self.estimator_label.lower()=="kmeans":
-                  araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
-                  Metrics["IIndex"] =  araujo.IIndex()
+                  #araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
+                  #Metrics["IIndex"] =  araujo.IIndex()
                   aruba = dunndex(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
                   Metrics["Dunn"] =  aruba.dunn_index()
                   Metrics["SSE"]=self.estimator.inertia_

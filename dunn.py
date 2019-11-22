@@ -19,18 +19,31 @@ class dunndex:
         for i,k in enumerate(cluster_k):
             for r in [k]:
                 df = pd.DataFrame(r)
-                for index, row in df.iterrows():
-                    big_deltas.append(euclidean([row[0], row[1]], self.centroids[i])) 
+                for row in df.itertuples():
+                    for alt_row in df.itertuples():
+                        if row.Index != alt_row.Index :
+                            big_deltas.append(euclidean(row, alt_row)) 
+        
+        print("Separation: ", np.max(big_deltas))
+
+
+        #Cohesion: MIN distance between points in different clusters
         
         deltas = []
 
-        for i in range(n_clusters):
-            for j in range(n_clusters):
-                if j != i:
-                    deltas.append(euclidean(self.centroids[i], self.centroids[j]))
-        
-        print("Min: ", np.min(deltas))
-        print("Max: ", np.max(big_deltas))
+        for i,k in enumerate(cluster_k):
+            for r in [k]:
+                df = pd.DataFrame(r)
+                for a,b in enumerate(cluster_k):
+                    for c in [b]:
+                        if i != a:
+                            df_2 = pd.DataFrame(c)
+                            for row in df.itertuples():
+                                for row_2 in df_2.itertuples():
+                                    deltas.append(euclidean(row, row_2)) 
+       
+       
+        print("Cohesion: ", np.min(deltas))
 
         index = np.min(deltas)/np.max(big_deltas)
 

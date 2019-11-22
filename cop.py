@@ -29,17 +29,22 @@ class cop:
         
         cluster = [self.X[self.Y == k] for k in range(self.len)]
         pair_distances = []
+        max_distances = []
 
         #Review separation computation: MAX & MINs
         for i,k in enumerate(cluster):
             for r in [k]:
                 df = pd.DataFrame(r)
-                for index, row in df.iterrows():
-                    for alt_index, alt_row in df.iterrows():
-                        if row != alt_row:
-                            pair_distances.append(euclidean(row, alt_row))
+                for a,b in enumerate(cluster):
+                    for c in [b]:
+                        if i != a:
+                            df_2 = pd.DataFrame(c)
+                            for row in df.itertuples():
+                                for row_2 in df_2.itertuples():
+                                    pair_distances.append(euclidean(row, row_2)) 
+                    max_distances.append(np.max(pair_distances))
     
-    return (1/self.len)
+    return np.min(max_distances)
 
 
     def COPScore(self):
@@ -48,30 +53,13 @@ class cop:
         
         cluster_k = [self.X[self.Y == k] for k in range(n_clusters)]
 
-       
-        
-        ek = []
-        sum = 0
-
+        cluster_size = 0
+        data_size = len(self.X)
         for i,k in enumerate(cluster_k):
             for r in [k]:
                 df = pd.DataFrame(r)
-                for index, row in df.iterrows():
-                    sum += euclidean(row, self.centroids[i])
-                    #sum += euclidean([row[0], row[1]], self.centroids[i])
-                ek.append(sum)
-                sum = 0
+                cluster_size += len(df)
 
-        e_ratio # = e_constant/np.sum(ek)
-
-        power = 0.5
-        pair_distances = []
-
-        for i in range(n_clusters):
-            for j in range(n_clusters):
-                if j != i:
-                    pair_distances.append(euclidean(self.centroids[i], self.centroids[j]))
+        index = ((1/data_size) * cluster_size * (cohesion()/separation()))
         
-        index = ((1/float(n_clusters)) * e_ratio * np.max(pair_distances))**power
-
         return index
