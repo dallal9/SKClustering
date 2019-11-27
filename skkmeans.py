@@ -10,7 +10,7 @@ csv_file = "./output/kmeans_eval_out_2.csv"
 
 count_all=1
 
-n_clusters_r=range(2, 3)
+n_clusters_r=range(2, 23)
 count_all*=len(n_clusters_r)
 
 init_r=['k-means++', 'random']

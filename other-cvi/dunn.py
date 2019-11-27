@@ -22,13 +22,8 @@ class dunndex:
                 for row in df.itertuples():
                     for alt_row in df.itertuples():
                         if row.Index != alt_row.Index :
-                            big_deltas.append(euclidean(row, alt_row)) 
-        
-        print("Separation: ", np.max(big_deltas))
-
-
-        #Cohesion: MIN distance between points in different clusters
-        
+                            big_deltas.append(euclidean(list(row), list(alt_row))) 
+                
         deltas = []
 
         for i,k in enumerate(cluster_k):
@@ -40,7 +35,7 @@ class dunndex:
                             df_2 = pd.DataFrame(c)
                             for row in df.itertuples():
                                 for row_2 in df_2.itertuples():
-                                    deltas.append(euclidean(row, row_2)) 
+                                    deltas.append(euclidean(list(row), list(row_2))) 
        
        
         print("Cohesion: ", np.min(deltas))

@@ -4,8 +4,7 @@ from sklearn import metrics
 from sklearn.cluster import KMeans, MeanShift, AffinityPropagation
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
-from iindex import metric
-from dunn import dunndex
+from cvi import validation
 import glob
 import os 
 import pandas as pd
@@ -109,16 +108,18 @@ class evaluate:
             if sample_size<100:
                   sample_size=len(self.data)
             Metrics={}
-            Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
-            Metrics["calinski_harabasz_score"]= metrics.calinski_harabaz_score(self.data,  self.estimator.labels_) 
-            Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
+            #Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
+            #Metrics["calinski_harabasz_score"]= metrics.calinski_harabaz_score(self.data,  self.estimator.labels_) 
+            #Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
             if self.estimator_label.lower()=="kmeans":
                   #araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
                   #Metrics["IIndex"] =  araujo.IIndex()
-                  aruba = dunndex(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
-                  Metrics["Dunn"] =  aruba.dunn_index()
-                  Metrics["SSE"]=self.estimator.inertia_
-                  Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
+                  #aruba = dunndex(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
+                  #Metrics["Dunn"] =  aruba.dunn_index()
+                  indices = validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
+                  Metrics["Ray"] = indices.Ray_Turi()
+                  #Metrics["SSE"]=self.estimator.inertia_
+                  #Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
             elif self.estimator_label.lower()=="affinityprop":
                   Metrics["n_clusters"] = len(self.estimator.cluster_centers_indices_)
                   
