@@ -5,6 +5,7 @@ from sklearn.cluster import KMeans, MeanShift, AffinityPropagation
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
 from cvi import validation
+from sdbw import sdbw
 import glob
 import os 
 import pandas as pd
@@ -114,10 +115,11 @@ class evaluate:
             if self.estimator_label.lower()=="kmeans":
                   #araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
                   #Metrics["IIndex"] =  araujo.IIndex()
-                  #aruba = dunndex(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
                   #Metrics["Dunn"] =  aruba.dunn_index()
+                  sdbw_c = sdbw(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
                   indices = validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
-                  Metrics["Ray"] = indices.Ray_Turi()
+                  #Metrics["SDBW"] = indices.s_dbw()
+                  Metrics["SDBW"] = sdbw_c.sdbw_score()
                   #Metrics["SSE"]=self.estimator.inertia_
                   #Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
             elif self.estimator_label.lower()=="affinityprop":

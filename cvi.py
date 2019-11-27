@@ -474,7 +474,7 @@ class validation:
                 clusterMember=self.dataMatrix[indices,:]
                 #compute the center of the cluster
                 clusterCenter=np.mean(clusterMember,0)
-                print(np.squeeze(np.asarray(clusterCenter)))
+                #print(np.squeeze(np.asarray(clusterCenter)))
                 list_centers.append(np.asarray(clusterCenter))
                 #iterate through the  cluster members
                 for member in clusterMember:
@@ -482,10 +482,8 @@ class validation:
                 #add to wgsss
                 wgss=wgss+wgssk
             #compute the min center dis
-            #minDis=math.pow(np.min(distance.pdist(list_centers)),2)
-            #minDis = np.min(distance.pdist(list_centers))
-            minDis = 1
-            #print(list_centers)
+            list_centers = np.concatenate(list_centers, axis=0)
+            minDis=math.pow(np.min(distance.pdist(list_centers)),2)
             #compute the fitness
             self.validation = wgss/(numObj*minDis)
             return self.validation
@@ -771,12 +769,13 @@ class validation:
                 clusterMember=self.dataMatrix[indices,:]
                 #compute the center of the cluster
                 clusterCenter=np.mean(clusterMember,0)
-                list_centers.append(clusterCenter)
+                list_centers.append(np.asarray(clusterCenter))
                 #compute the norm for every member in the cluster with cluster center and dataset center
                 for member in clusterMember:
                     normClusterSum=normClusterSum+distance.euclidean(member, clusterCenter)
                     normDatasetSum=normDatasetSum+distance.euclidean(member, dataCenter)
             #compute the max distance between cluster centers
+            list_centers = np.concatenate(list_centers, axis=0)
             maxCenterDis=max(distance.pdist(list_centers))
             #compute the fitness
             self.validation = math.pow(((normDatasetSum*maxCenterDis)/(normClusterSum*numCluster)),attributes)
@@ -837,10 +836,11 @@ class validation:
                 clusterMember=self.dataMatrix[indices,:]
                 #compute the cluster center
                 clusterCenter=np.mean(clusterMember,0)
-                list_centers.append(clusterCenter)
+                list_centers.append(np.asarray(clusterCenter))
                 #interate through each member of the cluster
                 for member in clusterMember:
                     sumNorm=sumNorm+math.pow(distance.euclidean(member,clusterCenter),2)
+            list_centers = np.concatenate(list_centers, axis=0)
             minDis=min(distance.pdist(list_centers))
             #compute the fitness
             self.validation = sumNorm/(numObject*pow(minDis,2))
@@ -866,6 +866,7 @@ class validation:
             sumNormCluster=0
             sumScat=0
             list_centers=[]
+            temp_c1, temp_c2 = [], []
             numCluster=max(self.classLabel)+1
             #compute the norm of sigma(dataset)
             normSigDataset=np.linalg.norm(np.var(self.dataMatrix,0))
@@ -889,6 +890,7 @@ class validation:
                 #get all members from cluster i
                 indices1=[t for t, x in enumerate(self.classLabel) if x == i]
                 clusterMember1=self.dataMatrix[indices1,:]
+                temp_c1 = clusterMember1.copy()
                 #compute sum of f(x,ci)
                 for member in clusterMember1:
                     sumDensity1=sumDensity1+validation.__density(member,list_centers[i],stdev)
@@ -899,15 +901,17 @@ class validation:
                         #get all members from cluster j
                         indices2=[t for t, x in enumerate(self.classLabel) if x == j]
                         clusterMember2=self.dataMatrix[indices2,:]
+                        temp_c2 = clusterMember2.copy()
                         #compute sum of f(x,cj)
                         for member in clusterMember2:
                             sumDensity2=sumDensity2+validation.__density(member,list_centers[j],stdev)
                         #compute the middle point of the two cluster centers
                         midPoint=[]
                         for k in range(len(list_centers[0])):
-                            midPoint.append((list_centers[i][k]+list_centers[j][k])/2)
+                            midPoint.append(np.asarray(list_centers[i][k]+list_centers[j][k])/2)
                         #compute sum of f(x,uij)
-                        combined=clusterMember1+clusterMember2
+                        midPoint = np.concatenate(midPoint, axis=0)
+                        combined= np.concatenate((temp_c1, temp_c2))
                         for member in combined:
                             sumDensityCombine=sumDensityCombine+validation.__density(member,midPoint,stdev)
                         sumTemp=sumTemp+sumDensityCombine/max([sumDensity1,sumDensity2])
