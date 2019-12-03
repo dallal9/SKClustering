@@ -5,6 +5,7 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import MeanShift
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
+
 import glob
 import os 
 import pandas as pd
@@ -67,7 +68,9 @@ class evaluate:
                                     print("fitted  "+str(count_load)+" out of "+str(len(allFiles)))
                               #try:
                               Metric= self.eval_metrics()
+
                               self.res[self.data_label]=Metric
+
                               count_test+=1
                               if verbose:
                                     print("evaluated "+str(count_load)+" out of "+str(len(allFiles)))
@@ -111,20 +114,25 @@ class evaluate:
        
             v= validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
             
-            metrics = v.run_all()
+            Metrics = v.run_all()
             try:
                   Ix = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
-                  metrics["IIndex"] =  Ix.IIndex()
+                  Metrics["IIndex"] =  Ix.IIndex()
             except:
-                   metrics["IIndex"] = "none"
+                   Metrics["IIndex"] = "none"
             try:
                   sdbw_c = sdbw(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
-                  metrics["SDBW"] = sdbw_c.sdbw_score()
+                  Metrics["SDBW"] = sdbw_c.sdbw_score()
             except:
-                  metrics["SDBW"] = "none"
+                  Metrics["SDBW"] = "none"
+            
+            Metrics["ari"]=metrics.adjusted_rand_score(self.y ,self.estimator.labels_)
+            Metrics["ami"]=metrics.adjusted_mutual_info_score(self.y ,self.estimator.labels_)
+            Metrics["nmi"]=metrics.normalized_mutual_info_score(self.y ,self.estimator.labels_)
+            Metrics["v_measure"]=metrics.v_measure_score(self.y, self.estimator.labels_)
+            
 
-            print(list(metrics.keys()))
-            sdasd
+
             '''
             sample_size=int(len(self.data)*0.1)
             if sample_size<100:
@@ -153,4 +161,5 @@ class evaluate:
                   #Metrics["SSE"] = -1
                   Metrics["nSSE"] = -1
             '''
-            return metrics
+
+            return Metrics
