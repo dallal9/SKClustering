@@ -1,20 +1,24 @@
 from time import time
 import numpy as np
 from sklearn import metrics
-from sklearn.cluster import KMeans, MeanShift, AffinityPropagation
+from sklearn.cluster import KMeans
+from sklearn.cluster import MeanShift
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
-from cvi import validation
-from sdbw import sdbw
 import glob
 import os 
 import pandas as pd
+from cvi import validation
+import sys
+sys.path.insert(0,'other-cvi')
+from sdbw import sdbw
+from iindex import metric
+
 
 ''' 
 evaluate class is used to evaluate differe sklearn clustering algorithms using datasets lcoated in path="./Datasets/processed/"
 
 '''
-
 class evaluate:
       def __init__(self,estimator_label,config,failed_file=False):
             self.estimator_label=estimator_label
@@ -26,7 +30,7 @@ class evaluate:
 
             self.failed.flush()
 
-      def run_all(self,path="./Datasets/select2/",verbose = False):
+      def run_all(self,path="./Datasets/processed/",verbose = False):
 
             if os.path.exists(path):
                   
@@ -37,8 +41,10 @@ class evaluate:
 
                   for dfile in allFiles:
                         try:
-                              self.data = pd.read_csv(dfile, header=None,na_values='?')
-                                                            
+                              data = pd.read_csv(dfile, header=None,na_values='?')
+                              self.y = data.iloc[:,-1]              
+
+                              self.data = data.iloc[:, :-1]
                               filename_w_ext = os.path.basename(dfile)
                               print(filename_w_ext)
                               filename, file_extension = os.path.splitext(filename_w_ext)
@@ -59,18 +65,18 @@ class evaluate:
                               count_train+=1
                               if verbose:
                                     print("fitted  "+str(count_load)+" out of "+str(len(allFiles)))
-                              try:
-                                    Metric= self.eval_metrics()
-                                    self.res[self.data_label]=Metric
-                                    count_test+=1
-                                    if verbose:
-                                          print("evaluated "+str(count_load)+" out of "+str(len(allFiles)))
+                              #try:
+                              Metric= self.eval_metrics()
+                              self.res[self.data_label]=Metric
+                              count_test+=1
+                              if verbose:
+                                    print("evaluated "+str(count_load)+" out of "+str(len(allFiles)))
                                           
-                              except:
-                                    print("evaluation problem",self.data_label,self.config)
-                                    self.failed.write(str(self.data_label)+" " +str(self.config))
-                                    self.failed.write("\n")
-                                    self.failed.flush()
+                              #except:
+                              #      print("evaluation problem",self.data_label,self.config)
+                              #      self.failed.write(str(self.data_label)+" " +str(self.config))
+                              #      self.failed.write("\n")
+                              #      self.failed.flush()
                                     
                         else:
                               print("model loading failed")
@@ -91,11 +97,8 @@ class evaluate:
             elif self.estimator_label.lower() =="meanshift":
                   self.estimator=MeanShift(cluster_all=self.config["cluster_all"],bin_seeding=self.config["bin_seeding"],n_jobs=self.config["n_jobs"])
                   return True
-            elif self.estimator_label.lower() == "affinityprop":
-                  self.estimator = AffinityPropagation(affinity = self.config["affinity"], damping = self.config["damping"], max_iter = self.config["max_iter"])
-                  return True
             else:
-                  print("couldn't load model", self.estimator_label)
+                  print("couldn't load model",self.estimator_label)
                   return False
 
       def fit_data(self):
@@ -105,28 +108,49 @@ class evaluate:
             self.estimator.predict(self.data)
       
       def eval_metrics(self):
+       
+            v= validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
+            
+            metrics = v.run_all()
+            try:
+                  Ix = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
+                  metrics["IIndex"] =  Ix.IIndex()
+            except:
+                   metrics["IIndex"] = "none"
+            try:
+                  sdbw_c = sdbw(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
+                  metrics["SDBW"] = sdbw_c.sdbw_score()
+            except:
+                  metrics["SDBW"] = "none"
+
+            print(list(metrics.keys()))
+            sdasd
+            '''
             sample_size=int(len(self.data)*0.1)
             if sample_size<100:
                   sample_size=len(self.data)
             Metrics={}
-            #Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
-            #Metrics["calinski_harabasz_score"]= metrics.calinski_harabaz_score(self.data,  self.estimator.labels_) 
-            #Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
-            if self.estimator_label.lower()=="kmeans":
-                  #araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
-                  #Metrics["IIndex"] =  araujo.IIndex()
-                  #Metrics["Dunn"] =  aruba.dunn_index()
-                  sdbw_c = sdbw(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
-                  indices = validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
-                  #Metrics["SDBW"] = indices.s_dbw()
-                  Metrics["SDBW"] = sdbw_c.sdbw_score()
-                  #Metrics["SSE"]=self.estimator.inertia_
-                  #Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
-            elif self.estimator_label.lower()=="affinityprop":
-                  Metrics["n_clusters"] = len(self.estimator.cluster_centers_indices_)
-                  
-            else:
-                  Metrics["SSE"] = -1
-                  Metrics["nSSE"] = -1
-            return Metrics
+            Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
+            Metrics["calinski_harabasz_score"]= metrics.calinski_harabasz_score(self.data,  self.estimator.labels_) 
+            Metrics["davies_bouldin_score"]=metrics.davies_bouldin_score(self.data,  self.estimator.labels_) 
+            if self.estimator_label.lower()=="meanshift":
+                   Metrics["SSE"]=len(self.estimator.cluster_centers_)
 
+            if self.estimator_label.lower()=="kmeans":
+                  araujo = metric(self.data, self.estimator.labels_, self.estimator.cluster_centers_)
+                  Metrics["IIndex"] = 0# araujo.IIndex()
+                  Metrics["SSE"]=self.estimator.inertia_
+                  Metrics["nSSE"]=self.estimator.inertia_/(len(self.data)*len(self.data.columns))
+
+                  labels_true=self.y
+
+                  labels_true=np.array(labels_true)
+                  Metrics["ARI"]=metrics.adjusted_rand_score(labels_true, self.estimator.labels_)  
+                  Metrics["MIS"]=metrics.adjusted_mutual_info_score(labels_true, self.estimator.labels_)
+                  Metrics["v_measure"]=metrics.v_measure_score(labels_true, self.estimator.labels_)
+
+            else:
+                  #Metrics["SSE"] = -1
+                  Metrics["nSSE"] = -1
+            '''
+            return metrics

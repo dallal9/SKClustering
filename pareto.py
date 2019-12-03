@@ -24,7 +24,7 @@ class PriorityQueue(object):
         try: 
             max = 0
             for i in range(len(self.queue)): 
-                if self.queue[i] > self.queue[max]: 
+                if self.queue[i][1] > self.queue[max][1]: 
                     max = i 
             item = self.queue[max] 
             del self.queue[max] 
@@ -85,7 +85,7 @@ sils=[]
 dbs=[]
 
 chs=[]
-for  k, row in df[df["dataset"]=="aggregation"].iterrows():
+for  k, row in df[df["dataset"]=="a1"].iterrows():
     for key in eval_labels:
         score=row[key]*eval_labels[key]
         scores[key].append(score)
@@ -104,12 +104,14 @@ print(label,max_ari,max(ARIs))
 
 max_ari=-1
 max_label=""
+queue = PriorityQueue()
 for config in configs: 
     ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points =merge(scores[config[0]],scores[config[1]]))
     if len (ndf[-1])==1:
         i = ndf[-1][0]
         ari_score=ARIs[i]
         label=str(config)
+        
     else:
         max_index=-1
         max_score=-1
@@ -119,13 +121,8 @@ for config in configs:
                 max_index=index
         ari_score=ARIs[index]
         label=str(config)
+    queue.insert([label,ari_score])
 
-    if ari_score>max_ari:
-        max_ari=ari_score
-        max_label=label
-
-print(label,max_ari,max(ARIs))
-
-
-
+item  =  queue.delete()
+print(item)
 

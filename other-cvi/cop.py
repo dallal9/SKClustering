@@ -44,7 +44,7 @@ class cop:
                                     pair_distances.append(euclidean(row, row_2)) 
                     max_distances.append(np.max(pair_distances))
     
-    return np.min(max_distances)
+        return np.min(max_distances)
 
 
     def COPScore(self):

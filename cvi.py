@@ -29,32 +29,32 @@ import warnings
 from sklearn import metrics
 
 class validation:
-	"""
-	validation is a class for calculating validation metrics on a data matrix (data), given the clustering labels in labels.
-	Instantiation sets validation to NaN and a description to ''. Once a metric is performed, these are replaced (unless)
-	validation did not yield a valid mathematical number, which can happen in certain cases, such as when a cluster
-	consists of only one member. Such results will warn the user.
+        """
+        validation is a class for calculating validation metrics on a data matrix (data), given the clustering labels in labels.
+        Instantiation sets validation to NaN and a description to ''. Once a metric is performed, these are replaced (unless)
+        validation did not yield a valid mathematical number, which can happen in certain cases, such as when a cluster
+        consists of only one member. Such results will warn the user.
 
-	Parameters
-	----------
-	data: matrix of floats
-		data matrix
-	labels: list of ints
-		The solution labels
+        Parameters
+        ----------
+        data: matrix of floats
+            data matrix
+        labels: list of ints
+            The solution labels
 
-	Attributes
-	----------
-	validation: float
-		Validation metric. NaN if error 
-	description: string
-		A description of the validation metric
+        Attributes
+        ----------
+        validation: float
+            Validation metric. NaN if error 
+        description: string
+            A description of the validation metric
 
-	See Also
-	--------
-	openensembles.validation()
+        See Also
+        --------
+        openensembles.validation()
 
 
-	"""
+        """
         def __init__(self, data, labels):
             self.dataMatrix = data
             self.classLabel = labels
@@ -957,3 +957,21 @@ class validation:
                     list_minDis.append(minDis)
             #compute the fitness
             return min(list_minDis)/max(list_diam)
+
+        def run_all(self):
+            metrics={}
+            keys=list(self.validation_metrics_available().keys())
+            
+            for key in keys:
+                metrics[key]="none"
+                
+                if key in ["Baker_Hubert_Gamma","tau_index","g_plus_index","run_all"]:
+                    continue
+                
+                    
+                try:
+                    metrics[key] = eval("self."+key+"()")
+                except:
+                    pass
+
+            return metrics
