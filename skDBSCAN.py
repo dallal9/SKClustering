@@ -13,16 +13,16 @@ csv_file = "./output/DBSCAN_out.csv"
 
 count_all=1
 
-leaf_size_r=[90]
+leaf_size_r=[50,90,100]
 count_all*=len(leaf_size_r)
 
-metric_r=['euclidean',  'manhattan']
+metric_r=['euclidean',  'manhattan','cosine']
 count_all*=len(metric_r)
 
-eps_r=[10]
+eps_r=[0.2,0.3,0.5]
 count_all*=len(eps_r)
 
-min_samples_r=[2]
+min_samples_r=[2,3,4]
 count_all*=len(min_samples_r)
 count=0
 
@@ -48,7 +48,7 @@ for leaf_size in leaf_size_r:
 
                               d0.update(config)
       
-                              dcols=["dataset" , "n_clusters" , "init" , "max_iter" , "n_init" , "algorithm" ,'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
+                              dcols=["dataset" , "leaf_size" , "metric" , "eps" , "min_samples",'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
                               with open(csv_file, 'a', newline='') as csvfile:
                                     writer = csv.DictWriter(
                                           csvfile, delimiter='\t', fieldnames=dcols)
