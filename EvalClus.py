@@ -2,6 +2,7 @@ from time import time
 import numpy as np
 from sklearn import metrics
 from sklearn.cluster import KMeans
+from sklearn.cluster import DBSCAN 
 from sklearn.cluster import MeanShift
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
@@ -25,6 +26,7 @@ class evaluate:
             self.estimator_label=estimator_label
             self.config=config           
             self.loaded=self.load_estimator()
+            
             self.res={}
             if not failed_file:
                   self.failed=open(estimator_label+"_failed.txt",mode="a")
@@ -62,7 +64,10 @@ class evaluate:
                               print("couldn't load "+dfile)
                                      
                         if self.loaded:
-                              self.fit_data()
+                              try:
+                                    self.fit_data()
+                              except:
+                                    return False
                               count_train+=1
                               if verbose:
                                     print("fitted  "+str(count_load)+" out of "+str(len(allFiles)))
@@ -91,7 +96,8 @@ class evaluate:
             else:
                   print(path+" doesn't exist")
                   return False
-      
+            return True
+
       def load_estimator(self):
             if self.estimator_label.lower() =="kmeans":
                   self.estimator=KMeans(init=self.config['init'], n_clusters=self.config['n_clusters'], algorithm = self.config["algorithm"]  ,n_init=self.config['n_init'],max_iter=self.config["max_iter"])
@@ -99,6 +105,9 @@ class evaluate:
                   return True
             elif self.estimator_label.lower() =="meanshift":
                   self.estimator=MeanShift(cluster_all=self.config["cluster_all"],bin_seeding=self.config["bin_seeding"],n_jobs=self.config["n_jobs"])
+                  return True
+            elif self.estimator_label.lower() =="dbscan":
+                  self.estimator=DBSCAN(leaf_size=self.config["leaf_size"],metric=self.config["metric"],eps=self.config["eps"],min_samples=self.config["min_samples"])
                   return True
             else:
                   print("couldn't load model",self.estimator_label)
