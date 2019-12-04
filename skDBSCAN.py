@@ -34,6 +34,7 @@ for leaf_size in leaf_size_r:
                               "eps": eps, "min_samples": min_samples}
                         s = evaluate(estimator, config)
                         count+=1
+                        print("run "+str(count)+" configs out of "+str(count_all))
                         flag = s.run_all(verbose=True)
                         if not flag:
                               continue
@@ -61,4 +62,4 @@ for leaf_size in leaf_size_r:
                                     writer.writerow(dwrite)
                                     csvfile.flush()
                         
-                        print("run "+str(count)+" configs out of "+str(count_all))
+                        
