@@ -57,7 +57,7 @@ ndf = pg.non_dominated_front_2d(points = [[0,1],[-1,3],[2.3,-0.2],[1.1,-0.12],[1
 
 print(ndf)
 
-df = pd.read_csv('data1.tsv', sep = "\t")
+df = pd.read_csv('birch1.tsv', sep = "\t")
 print(df.columns)
 
 #eval_labels={"silhouette_score":1,"calinski_harabasz_score":1,"davies_bouldin_score":-1,"SSE":-1,"nSSE":-1}
