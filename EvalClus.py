@@ -111,6 +111,9 @@ class evaluate:
             self.estimator.predict(self.data)
       
       def eval_metrics(self):
+            sample_size=int(len(self.data)*0.1)
+            if sample_size<100:
+                  sample_size=len(self.data)
        
             v= validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
             
@@ -130,7 +133,8 @@ class evaluate:
             Metrics["ami"]=metrics.adjusted_mutual_info_score(self.y ,self.estimator.labels_)
             Metrics["nmi"]=metrics.normalized_mutual_info_score(self.y ,self.estimator.labels_)
             Metrics["v_measure"]=metrics.v_measure_score(self.y, self.estimator.labels_)
-            
+            Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
+            Metrics["calinski_harabasz_score"]= metrics.calinski_harabasz_score(self.data,  self.estimator.labels_) 
 
 
             '''
