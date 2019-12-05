@@ -67,9 +67,9 @@ class evaluate:
                               try:
                                     self.fit_data()
                               except:
-                                    return False
+                                    continue
                               if len(set(list(self.estimator.labels_)))==1:
-                                    return False
+                                    continue
                               count_train+=1
                               if verbose:
                                     print("fitted  "+str(count_load)+" out of "+str(len(allFiles)))
