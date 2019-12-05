@@ -5,6 +5,7 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN 
 from sklearn.cluster import MeanShift
 from sklearn.cluster import AffinityPropagation
+from sklearn.cluster import SpectralClustering
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
 
@@ -114,6 +115,9 @@ class evaluate:
                   return True
             elif self.estimator_label.lower() =="affinitypropagation":
                   self.estimator=AffinityPropagation(damping=self.config["damping"],convergence_iter=self.config["convergence_iter"],max_iter=self.config["max_iter"])
+                  return True
+            if self.estimator_label.lower() =="spectralclustering":
+                  self.estimator=SpectralClustering(n_clusters=self.config['n_clusters'], eigen_solver = self.config["eigen_solver"]  ,affinity=self.config['affinity'],assign_labels=self.config["assign_labels"])
                   return True
             else:
                   print("couldn't load model",self.estimator_label)
