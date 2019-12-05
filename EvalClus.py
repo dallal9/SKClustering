@@ -4,6 +4,7 @@ from sklearn import metrics
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN 
 from sklearn.cluster import MeanShift
+from sklearn.cluster import AffinityPropagation
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
 
@@ -110,6 +111,9 @@ class evaluate:
                   return True
             elif self.estimator_label.lower() =="dbscan":
                   self.estimator=DBSCAN(leaf_size=self.config["leaf_size"],metric=self.config["metric"],eps=self.config["eps"],min_samples=self.config["min_samples"])
+                  return True
+            elif self.estimator_label.lower() =="affinitypropagation":
+                  self.estimator=AffinityPropagation(damping=self.config["damping"],convergence_iter=self.config["convergence_iter"],max_iter=self.config["max_iter"])
                   return True
             else:
                   print("couldn't load model",self.estimator_label)
