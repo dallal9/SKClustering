@@ -4,7 +4,7 @@ from sklearn import metrics
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN 
 from sklearn.cluster import MeanShift
-from sklearn.cluster import AffinityPropagation
+from sklearn.cluster import AffinityPropagation, AgglomerativeClustering
 from sklearn.cluster import SpectralClustering, Birch, OPTICS
 from sklearn.mixture import GaussianMixture
 from sklearn.impute import SimpleImputer
@@ -128,6 +128,9 @@ class evaluate:
                   return True
             elif self.estimator_label.lower() =="gaussian":
                   self.estimator=GaussianMixture(n_init=self.config['n_init'], init_params=self.config["init_params"]  ,n_components=self.config['n_components'], covariance_type=self.config["covariance_type"])
+                  return True
+            elif self.estimator_label.lower() =="agglomerativeclustering":
+                  self.estimator=GaussianMixture(n_clusters=self.config['n_clusters'], linkage=self.config["linkage"])
                   return True
             else:
                   print("couldn't load model",self.estimator_label)

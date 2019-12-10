@@ -13,7 +13,7 @@ config = {"init": "k-means++", "n_clusters": 8, "n_init": 10, "assign_labels": 3
 csv_file = "./output/SpectralClustering_out.csv"
 
 count_all=1
-n_clusters_r=list(range(2,32))
+n_clusters_r=list(range(2,40))
 count_all*=len(n_clusters_r)
 
 eigen_solver_r = [None]#, 'arpack', 'lobpcg', 'amg']
