@@ -9,19 +9,17 @@ All results are written to csv file defined in the code , csv_file = "./output/A
 '''
 
 estimator = "AffinityPropagation"
-config = {"init": "k-means++", "n_clusters": 8, "n_init": 10, "max_iter": 300}
 csv_file = "./output/AffinityPropagation_out.csv"
 
 count_all=1
 
-damping_r=[0.5,0.7,0.8,0.9,1]
-
+damping_r=[0.5,0.6,0.7,0.8,0.9,1]
 count_all*=len(damping_r)
 
-convergence_iter_r=[3,10,15]#, 'random']
+convergence_iter_r=[3,10,15,20,30]#, 'random']
 count_all*=len(convergence_iter_r)
 
-max_iter_r= [100,200,300]
+max_iter_r= [300]
 count_all*=len(max_iter_r)
 
 
