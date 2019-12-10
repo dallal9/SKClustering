@@ -18,10 +18,10 @@ count_all=1
 min_samples_r = list(range(2, 20))
 count_all*=len(min_samples_r)
 
-cluster_method_r = ["auto", "kdtree", "brute"]
+cluster_method_r = ["xi", "dbscan"]
 count_all*=len(cluster_method_r)
 
-n_jobs_r = [-1, -2, 1]
+n_jobs_r = [None]
 count_all*=len(n_jobs_r)
 
 p_r = [1, 2]

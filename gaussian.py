@@ -15,7 +15,7 @@ csv_file = "./output/gaussian_out.csv"
 
 count_all=1
 
-init_params_r=['k-means++','random']
+init_params_r=['random']
 count_all*=len(init_params_r)
 
 n_init_r= [1, 2, 5, 10, 20, 50]
