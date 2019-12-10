@@ -5,7 +5,8 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN 
 from sklearn.cluster import MeanShift
 from sklearn.cluster import AffinityPropagation
-from sklearn.cluster import SpectralClustering
+from sklearn.cluster import SpectralClustering, Birch, OPTICS
+from sklearn.mixture import GaussianMixture
 from sklearn.impute import SimpleImputer
 from sklearn.metrics.cluster import contingency_matrix
 
@@ -116,8 +117,17 @@ class evaluate:
             elif self.estimator_label.lower() =="affinitypropagation":
                   self.estimator=AffinityPropagation(damping=self.config["damping"],convergence_iter=self.config["convergence_iter"],max_iter=self.config["max_iter"])
                   return True
-            if self.estimator_label.lower() =="spectralclustering":
+            elif self.estimator_label.lower() =="spectralclustering":
                   self.estimator=SpectralClustering(n_clusters=self.config['n_clusters'], eigen_solver = self.config["eigen_solver"]  ,affinity=self.config['affinity'],assign_labels=self.config["assign_labels"])
+                  return True
+            elif self.estimator_label.lower() =="birch":
+                  self.estimator=Birch(n_clusters=self.config['n_clusters'], threshold=self.config["threshold"]  ,branching_factor=self.config['branching_factor'])
+                  return True
+            elif self.estimator_label.lower() =="optics":
+                  self.estimator=OPTICS(min_samples=self.config['min_samples'], cluster_method=self.config["cluster_method"]  ,p=self.config['p'], n_jobs=self.config["n_jobs"])
+                  return True
+            elif self.estimator_label.lower() =="gaussian":
+                  self.estimator=GaussianMixture(n_init=self.config['n_init'], init_params=self.config["init_params"]  ,n_components=self.config['n_components'], covariance_type=self.config["covariance_type"])
                   return True
             else:
                   print("couldn't load model",self.estimator_label)

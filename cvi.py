@@ -965,12 +965,14 @@ class validation:
             for key in keys:
                 metrics[key]="none"
                 
-                if key in ["Baker_Hubert_Gamma","tau_index","g_plus_index","run_all"]:
+                if key in ["Baker_Hubert_Gamma","tau_index","g_plus_index","log_ss_ratio","log_det_ratio","det_ratio","run_all","ksq_detw_index","modified_hubert_t"]:
                     continue
                 
                     
                 try:
+                    #print(key)
                     metrics[key] = eval("self."+key+"()")
+                    
                 except:
                     pass
 

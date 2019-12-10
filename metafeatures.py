@@ -199,6 +199,7 @@ def new_metafeatures(data):
 
     for attr in list(data):
         temp_X = np.asarray(list(data[attr]))
+        #print(np.is_na())
         attr_variance.append(np.var(temp_X))
         attr_cv.append(np.std(temp_X)/np.mean(temp_X))
         attr_cvq1.append(np.quantile(temp_X, 0.25, axis=0)/np.mean(temp_X))
@@ -390,7 +391,7 @@ def extract_metafeatures(file, meta_type):
             results = pd.DataFrame([metafeatures])
         
     dataset_name = file.split('\\')[-1]
-    results['dataset'] = dataset_name
+    results['dataset'] = dataset_name.split('/')[3].split('.')[0]
 
     return results
 
@@ -408,4 +409,4 @@ def extract_for_all(path, meta_type):
                    header=True,
                    index=False)
 
-print(extract_for_all("./Datasets/processed/", "attribute"))
+print(extract_for_all("./Datasets/processed/", "distance"))

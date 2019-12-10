@@ -4,6 +4,7 @@ import numpy as np
 import math
 import itertools
 from scipy.stats import spearmanr
+import csv
 
 class PriorityQueue(object): 
     def __init__(self): 
@@ -63,7 +64,7 @@ ndf = pg.non_dominated_front_2d(points = [[0,1],[-1,3],[2.3,-0.2],[1.1,-0.12],[1
 
 print(ndf)
 
-df = pd.read_csv('out3.tsv', sep = "\t")
+df = pd.read_csv('combined.tsv', sep = "\t")
 datasets = list(set(df["dataset"]))
 
 #eval_labels={"silhouette_score":1,"calinski_harabasz_score":1,"davies_bouldin_score":-1,"SSE":-1,"nSSE":-1}
@@ -149,14 +150,25 @@ for info in infos:
     OUT=info["OUT"]
     ARIs_in=info["ARI_INFO"]
     scores=info["scores"]
-
+    dataset=info["dataset"]
     max3=-1
     label=""
+    l=[]
     for each in OUT:
         c = spearmanr(get_slice(each),ARIs_in)
         if  c[0] > max3:
             max3 = c[0]
-            label=each[0]
+            label=each[0][0]
+        #l.append((label,max3))
+
+    #l.sort(key=lambda tup: tup[1]) 
+    #print(l)
+    #asda
+    dwrite={"dataset":dataset,"label":label,"correlation":max3}
+    with open("out_pareto.tsv", 'a', newline='') as csvfile:
+        writer = csv.DictWriter(  csvfile, delimiter='\t', fieldnames=["dataset","label","correlation"])                          
+        writer.writerow(dwrite)
+        csvfile.flush()
 
     print(max3,label)
 
@@ -176,6 +188,11 @@ for info in infos:
             label1=key
 
 
+    dwrite={"dataset":dataset,"label":label1,"correlation":max1}
+    with open("out_pareto2.tsv", 'a', newline='') as csvfile:
+        writer = csv.DictWriter(  csvfile, delimiter='\t', fieldnames=["dataset","label","correlation"])                          
+        writer.writerow(dwrite)
+        csvfile.flush()
 
 
 

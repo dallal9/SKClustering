@@ -14,11 +14,11 @@ csv_file = "./output/newskmean_out.csv"
 
 count_all=1
 
-n_clusters_r=list(range(2, 33))
+n_clusters_r=list(range(2, 40))
 
 count_all*=len(n_clusters_r)
 
-init_r=['k-means++']#, 'random']
+init_r=['k-means++','random']
 count_all*=len(init_r)
 
 max_iter_r= [300]#[100, 300, 1000, 5000]
@@ -31,9 +31,8 @@ n_init_r=[10]#[2, 10, 50]
 count_all*=len(n_init_r)
 
 count=0
-
-for n_clusters in n_clusters_r:
-      for init in init_r:
+for init in init_r:
+      for n_clusters in n_clusters_r:
             for max_iter in max_iter_r:
                   for algorithm in algorithm_r:
                         for n_init in n_init_r:
