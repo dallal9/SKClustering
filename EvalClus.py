@@ -161,12 +161,19 @@ class evaluate:
             except:
                   Metrics["SDBW"] = "none"
             
-            Metrics["ari"]=metrics.adjusted_rand_score(self.y ,self.estimator.labels_)
-            Metrics["ami"]=metrics.adjusted_mutual_info_score(self.y ,self.estimator.labels_)
+            Metrics["ari"]=0.0
+            Metrics["ami"]=0.0
             Metrics["nmi"]=metrics.normalized_mutual_info_score(self.y ,self.estimator.labels_)
-            Metrics["v_measure"]=metrics.v_measure_score(self.y, self.estimator.labels_)
-            Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
-            Metrics["calinski_harabasz_score"]= metrics.calinski_harabasz_score(self.data,  self.estimator.labels_) 
+            Metrics["v_measure"]= 0.0
+            try:
+                  Metrics["silhouette_score"] = metrics.silhouette_score(self.data, self.estimator.labels_, metric='euclidean', sample_size=sample_size,random_state=0)
+            except:
+                  Metrics["silhouette_score"] = 0.0
+            try:      
+                  Metrics["calinski_harabasz_score"]= metrics.calinski_harabasz_score(self.data,  self.estimator.labels_) 
+
+            except:
+                  Metrics["calinski_harabasz_score"]=0.0
 
 
             '''
