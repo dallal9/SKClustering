@@ -64,7 +64,7 @@ ndf = pg.non_dominated_front_2d(points = [[0,1],[-1,3],[2.3,-0.2],[1.1,-0.12],[1
 
 print(ndf)
 
-df = pd.read_csv('combined.tsv', sep = "\t")
+df = pd.read_csv('output/data64.csv', sep = "\t")
 datasets = list(set(df["dataset"]))
 
 #eval_labels={"silhouette_score":1,"calinski_harabasz_score":1,"davies_bouldin_score":-1,"SSE":-1,"nSSE":-1}
@@ -156,17 +156,23 @@ for info in infos:
     l=[]
     for each in OUT:
         c = spearmanr(get_slice(each),ARIs_in)
-        if  c[0] > max3:
-            max3 = c[0]
-            label=each[0][0]
-        #l.append((label,max3))
+        #if  c[0] > max3:
+        max3 = c[0]
+        label=each[0][0]
+        l.append((label,max3))
 
-    #l.sort(key=lambda tup: tup[1]) 
-    #print(l)
+    l.sort(key=lambda tup: tup[1],reverse=True)
     #asda
-    dwrite={"dataset":dataset,"label":label,"correlation":max3}
-    with open("out_pareto.tsv", 'a', newline='') as csvfile:
-        writer = csv.DictWriter(  csvfile, delimiter='\t', fieldnames=["dataset","label","correlation"])                          
+    lolz=0
+    
+    dwrite={"dataset":dataset,"label":l[0][0],"correlation":l[0][1]}
+    
+    for ind in range(1,len(l)):
+        if l[0][1] == l[ind][1]:
+            d2={"label"+str(ind):l[ind][0],"correlation"+str(ind):l[ind][1]}
+            dwrite.update(d2)
+    with open("multi_cvi2.tsv", 'a', newline='') as csvfile:
+        writer = csv.DictWriter(  csvfile, delimiter='\t', fieldnames=list(dwrite.keys()))                          
         writer.writerow(dwrite)
         csvfile.flush()
 
@@ -189,7 +195,7 @@ for info in infos:
 
 
     dwrite={"dataset":dataset,"label":label1,"correlation":max1}
-    with open("out_pareto2.tsv", 'a', newline='') as csvfile:
+    with open("single_pareto2.tsv", 'a', newline='') as csvfile:
         writer = csv.DictWriter(  csvfile, delimiter='\t', fieldnames=["dataset","label","correlation"])                          
         writer.writerow(dwrite)
         csvfile.flush()
