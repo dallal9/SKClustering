@@ -130,7 +130,7 @@ class evaluate:
                   self.estimator=GaussianMixture(n_init=self.config['n_init'], init_params=self.config["init_params"]  ,n_components=self.config['n_components'], covariance_type=self.config["covariance_type"])
                   return True
             elif self.estimator_label.lower() =="agglomerativeclustering":
-                  self.estimator=GaussianMixture(n_clusters=self.config['n_clusters'], linkage=self.config["linkage"])
+                  self.estimator=AgglomerativeClustering(n_clusters=self.config['n_clusters'], linkage=self.config["linkage"])
                   return True
             else:
                   print("couldn't load model",self.estimator_label)
