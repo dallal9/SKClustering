@@ -33,7 +33,7 @@ for min_samples in min_samples_r:
     for cluster_method in cluster_method_r:
             for p in p_r:
                 for n_jobs in n_jobs_r:
-                    config = {"min_samples": 5, "cluster_method": "auto", "p": 1, "n_jobs": 1}
+                    config = {"min_samples": min_samples, "cluster_method": cluster_method, "p": p, "n_jobs": n_jobs}
                     s = evaluate(estimator, config)
                     s.run_all(verbose=True)
                     out = s.res
