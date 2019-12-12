@@ -67,15 +67,18 @@ class evaluate:
                               print("couldn't load "+dfile)
                                      
                         if self.loaded:
-                              try:
-                                    self.fit_data()
-                              except:
-                                    continue
+                              #try:
+                              self.fit_data()
+                              #except:
+                              #      continue
                               if len(set(list(self.estimator.labels_)))==1:
                                     continue
                               count_train+=1
                               if verbose:
                                     print("fitted  "+str(count_load)+" out of "+str(len(allFiles)))
+  
+                              if len(list(set(self.estimator.labels_)))/len(self.data) >0.75:
+                                    continue
                               #try:
                               Metric= self.eval_metrics()
 
