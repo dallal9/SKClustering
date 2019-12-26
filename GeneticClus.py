@@ -1,6 +1,7 @@
 import random 
 from sklearn.cluster import KMeans, MeanShift, DBSCAN, \
-    AffinityPropagation, SpectralClustering, AgglomerativeClustering
+    AffinityPropagation, SpectralClustering, AgglomerativeClustering, \
+    OPTICS, Birch
 from sklearn import metrics
 import numpy as np
 import pandas as pd
@@ -317,6 +318,129 @@ class AgglomerativeCluster:
         return pop
 
 
+class Optics:
+    """
+    OPTICS Clustering
+    """
+    def __init__(self):
+        self.params = ["min_samples", "max_eps", "metric",
+                       "cluster_method", "algorithm"]
+        self.L = len(self.params)  # number of parameters
+
+    @staticmethod
+    def generate_pop(size=1):
+        population = []
+        for i in range(size+1):
+            min_samples = random.uniform(0, 1)
+            max_eps = random.choice([np.inf, random.uniform(1, 100)])
+            metric = random.choice(['cityblock', 'cosine', 'euclidean',
+                                    'l1', 'l2', 'manhattan', 'braycurtis', 
+                                    'canberra', 'chebyshev', 'correlation',
+                                    'dice', 'hamming', 'jaccard', 'kulsinski',
+                                    'mahalanobis', 'minkowski', 'rogerstanimoto',
+                                    'russellrao', 'seuclidean', 'sokalmichener',
+                                    'sokalsneath', 'sqeuclidean', 'yule'])
+            cluster_method = random.choice(['xi', 'dbscan'])
+            algorithm = random.choice(['auto', 'ball_tree', 'kd_tree', 'brute'])
+
+            population.append(["OPTICS",
+                               OPTICS(min_samples=min_samples, max_eps=max_eps, metric=metric,
+                                      cluster_method=cluster_method, algorithm=algorithm)])
+        return population
+
+    def mutate(self, pop):
+        p = self.generate_pop(size=1)[0]
+        L = self.L
+        pos = random.randint(0, L-1)
+
+        if pos <= 4:
+            pop[1].min_samples = p[1].min_samples
+        if pos <= 3:
+            pop[1].max_eps = p[1].max_eps
+        if pos <= 2:
+            pop[1].metric = p[1].metric
+        if pos <= 1:
+            pop[1].cluster_method = p[1].cluster_method
+        if pos == 0:
+            pop[1].algorithm = p[1].algorithm
+
+        return pop
+
+    def cross_over(self, pop, pop2):
+        p = pop2
+        L = self.L
+        pos = random.randint(0, L-1)
+
+        if pos <= 4:
+            pop[1].min_samples = p[1].min_samples
+        if pos <= 3:
+            pop[1].max_eps = p[1].max_eps
+        if pos <= 2:
+            pop[1].metric = p[1].metric
+        if pos <= 1:
+            pop[1].cluster_method = p[1].cluster_method
+        if pos == 0:
+            pop[1].algorithm = p[1].algorithm
+
+        return pop
+
+
+class BirchClustering:
+    """
+    Birch Clustering
+    """
+    def __init__(self):
+        self.params = ["threshold", "branching_factor",
+                       "compute_labels", "copy"]
+        self.L = len(self.params)  # number of parameters
+
+    @staticmethod
+    def generate_pop(size=1):
+        population = []
+        for i in range(size+1):
+            threshold = random.uniform(0.2, 2)
+            branching_factor = random.randint(1, 100)
+            compute_labels = random.choice([True, False])
+            copy = random.choice([True, False])
+
+            population.append(["birch",
+                               Birch(threshold=threshold, branching_factor=branching_factor,
+                                     compute_labels=compute_labels, copy=copy)])
+        return population
+
+    def mutate(self, pop):
+        p = self.generate_pop(size=1)[0]
+        L = self.L
+        pos = random.randint(0, L-1)
+
+        if pos <= 3:
+            pop[1].threshold = p[1].threshold
+        if pos <= 2:
+            pop[1].branching_factor = p[1].branching_factor
+        if pos <= 1:
+            pop[1].compute_labels = p[1].compute_labels
+        if pos == 0:
+            pop[1].copy = p[1].copy
+
+        return pop
+
+    def cross_over(self, pop, pop2):
+        p = pop2
+        L = self.L
+        pos = random.randint(0, L-1)
+
+        if pos <= 3:
+            pop[1].threshold = p[1].threshold
+        if pos <= 2:
+            pop[1].branching_factor = p[1].branching_factor
+        if pos <= 1:
+            pop[1].compute_labels = p[1].compute_labels
+        if pos == 0:
+            pop[1].copy = p[1].copy
+
+        return pop
+
+
 class AutoClus:
 
     def __init__(self, dfile=""):
@@ -329,16 +453,18 @@ class AutoClus:
         self.affinity_propagation = AffinPropagation()
         self.spectral_clustering = SpectralCluster()
         self.agglomerative_clustering = AgglomerativeCluster()
+        self.optics = Optics()
+        self.birch = BirchClustering()
 
         self.population = []
 
-    def generate_pop(self, size=30):
+    def generate_pop(self, size=40):
         """
 
         :param size: size needs to be divisible by # of clustering algorithms
         :return:
         """
-        nr_algorithms = 6# number of clustering algorithms
+        nr_algorithms = 8  # number of clustering algorithms
         p = int(size / nr_algorithms)
         population = []
         population.extend(self.kmeans.generate_pop(p))
@@ -347,6 +473,8 @@ class AutoClus:
         population.extend(self.affinity_propagation.generate_pop(p))
         population.extend(self.spectral_clustering.generate_pop(p))
         population.extend(self.agglomerative_clustering.generate_pop(p))
+        population.extend(self.optics.generate_pop(p))
+        population.extend(self.birch.generate_pop(p))
 
         self.population = population
         return population
@@ -402,8 +530,6 @@ class AutoClus:
             new_population.append(n_pop)
 
         return new_population
-
-
 
 auto = AutoClus(dfile="test.csv")
 auto.generate_pop(15)
