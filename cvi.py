@@ -27,6 +27,7 @@ import itertools
 import re
 import warnings
 from sklearn import metrics
+from sdbw import sdbw
 
 class validation:
         """
@@ -60,6 +61,7 @@ class validation:
             self.classLabel = labels
             self.validation = np.nan
             self.description = ''
+
 
         def validation_metrics_available(self):
             """
@@ -135,8 +137,12 @@ class validation:
             metric = metrics.silhouette_score(self.dataMatrix, self.classLabel, metric='euclidean')
             self.validation = metric
             return self.validation
-
-
+        
+        def calinski_harabasz(self):
+            metric = metrics.calinski_harabasz_score(self.dataMatrix, self.classLabel)
+            self.validation = metric
+            return self.validation
+        
         def Baker_Hubert_Gamma(self):
             """
             Baker-Hubert Gamma Index: A measure of compactness, based on similarity between points in a cluster, compared to similarity
@@ -976,4 +982,13 @@ class validation:
                 except:
                     pass
 
+            return metrics
+
+        def run_list(self,cvi_list=["Banfeld_Raferty","modified_hubert_t","point_biserial","Davies_Bouldin",""]):
+            metrics={}
+            for key in cvi_list:
+                try:
+                    metrics[key] = eval("self."+key+"()")
+                except:
+                    continue
             return metrics

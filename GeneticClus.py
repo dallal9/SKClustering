@@ -8,15 +8,18 @@ import pandas as pd
 import csv
 import pygmo as pg
 from scipy.stats import spearmanr
+from cvi import validation
+from sdbw import sdbw
 
 class kmeans:
-    def __init__(self):
+    def __init__(self,len_data):
         self.params=["n_clusters","algorithm","init","n_init"]
+        self.len_data=len_data
 
     def generate_pop(self,size=1):
         population=[]
         for i in range(size+1):
-            n_clusters= random.choice(list(range(2,101)))
+            n_clusters=random.choice(list(range(2,min(int(0.3*self.len_data),101))))
             init =  random.choice(['k-means++', 'random'])
             algorithm =  random.choice(['auto', 'full', 'elkan'])
             n_init = random.choice(list(range(10,25)))
@@ -136,7 +139,7 @@ class dbscan:
 
         return pop
 
-    def mutate(self,pop,pop2):
+    def cross_over(self,pop,pop2):
         p = pop2
         L = len(self.params)
         pos = random.randint(0,L-1)
@@ -343,7 +346,7 @@ class Optics:
             cluster_method = random.choice(['xi', 'dbscan'])
             algorithm = random.choice(['auto', 'ball_tree', 'kd_tree', 'brute'])
 
-            population.append(["OPTICS",
+            population.append(["optics",
                                OPTICS(min_samples=min_samples, max_eps=max_eps, metric=metric,
                                       cluster_method=cluster_method, algorithm=algorithm)])
         return population
@@ -443,11 +446,11 @@ class BirchClustering:
 
 class AutoClus:
 
-    def __init__(self, dfile=""):
+    def __init__(self,dfile="",cvi1=["davies_bouldin_score",-1],cvi2=["davies_bouldin_score",-1],cvi3=["davies_bouldin_score",-1]):
         data = pd.read_csv(dfile, header=None, na_values='?')
         self.data = data
 
-        self.kmeans = kmeans()
+        self.kmeans = kmeans(len(data))
         self.meanshift = meanshift()
         self.dbscan = dbscan()
         self.affinity_propagation = AffinPropagation()
@@ -455,6 +458,12 @@ class AutoClus:
         self.agglomerative_clustering = AgglomerativeCluster()
         self.optics = Optics()
         self.birch = BirchClustering()
+
+        
+        self.cvi1=cvi1
+        self.cvi2=cvi2
+        self.cvi3=cvi3
+
 
         self.population = []
 
@@ -467,7 +476,7 @@ class AutoClus:
         nr_algorithms = 8  # number of clustering algorithms
         p = int(size / nr_algorithms)
         population = []
-        population.extend(self.kmeans.generate_pop(p))
+        population.extend(self.kmeans.generate_pop(p+(size-(p*8))))
         population.extend(self.meanshift.generate_pop(p))
         population.extend(self.dbscan.generate_pop(p))
         population.extend(self.affinity_propagation.generate_pop(p))
@@ -486,51 +495,84 @@ class AutoClus:
         vals3 = []
         indx = []
         for i in range(len(self.population)):
+
             Metrics = {}
             try:
                 clustering = self.population[i][1].fit(self.data)
             except:
                 continue
-
-            if len(set(list(clustering.labels_))) == 1:
+            
+            try:
+                if len(set(list(clustering.labels_))) == 1 or len(set(list(clustering.labels_)))>=(len(self.data)-1):
+                    continue
+            except:
                 continue
             try:
                 sample_size = int(len(self.data)*0.1)
                 if sample_size < 100:
                     sample_size = len(self.data)
-                Metrics["davies_bouldin_score"] = metrics.davies_bouldin_score(self.data,  clustering.labels_)
-                Metrics["silhouette_score"] = metrics.silhouette_score(self.data, clustering.labels_,
-                                                                       metric='euclidean', sample_size=sample_size,
-                                                                       random_state=0)
-                Metrics["calinski_harabasz_score"] = metrics.calinski_harabasz_score(self.data,  clustering.labels_)
+                labels = list(clustering.labels_)
+
+                for u in range(len(labels)):
+                    if labels[u]<0:
+                        labels[u]=0
+
+
+                v= validation(np.asmatrix(self.data).astype(np.float),labels )
+                Metrics=v.run_list([self.cvi1[0],self.cvi2[0],self.cvi3[0]])
+                if "SDBW" in [self.cvi1[0],self.cvi2[0]]:
+                    sdbw_c = sdbw(self.data, clustering.labels_, clustering.cluster_centers_)
+                    Metrics["SDBW"] = sdbw_c.sdbw_score()
+
+                indx.append(i)
+                vals12.append([Metrics[self.cvi1[0]]*self.cvi1[1],Metrics[self.cvi2[0]]*self.cvi2[1]])
+                vals3.append(Metrics[self.cvi3[0]]*self.cvi3[1])
+                
             except:
                 continue
-            indx.append(i)
-            vals12.append([Metrics["davies_bouldin_score"], Metrics["silhouette_score"]])
-            vals3.append(Metrics["calinski_harabasz_score"])
 
-        ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points=vals12)
-        ndf.reverse()
+        ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points =vals12)
+        ndf.reverse() 
 
-        print(ndf)
+
+            
+        top_10=[]
+        count=0
+        for l in ndf:
+            for ix in l:
+                    top_10.append(self.population[indx[ix]])
+                    count+=1
+                    if count >= 10:
+                        break
+            if count >= 10:
+                break
+
+        #    if len(l)+len(top_20)<=2:
+        #        top_20.extend()
+
+        print(top_10)
 
     def cross_over(self, pop1, pop2):
         if pop1[0] != pop2[0]:
             return None
         else:
             model = eval("self."+pop1[0])
-            n_pop = model.mutate(pop1, pop2)
+            n_pop = model.cross_over(pop1, pop2)
             return n_pop
 
     def mutation(self, population=[]):
         new_population = []
         for pop in population:
             model = eval("self."+pop[0])
-            n_pop = model.mutate(pop)
+            n_pop=pop[:]
+            n_pop = model.mutate(n_pop)
             new_population.append(n_pop)
 
         return new_population
 
-auto = AutoClus(dfile="test.csv")
-auto.generate_pop(15)
-auto.evaluate_pop()
+auto = AutoClus(dfile="test.csv", cvi1=["SDBW",-1],cvi2=["modified_hubert_t",1],cvi3=["Banfeld_Raferty",-1])
+auto.generate_pop(50)
+
+p0 = auto.mutation(auto.population)
+p1 = auto.cross_over(auto.population[0],auto.population[1])
+
