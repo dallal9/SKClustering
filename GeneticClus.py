@@ -43,20 +43,19 @@ class kmeans:
         return pop
 
     def cross_over(self,pop,pop2):
-        p = pop2
         L = len(self.params)
         pos = random.randint(0,L-1)
 
         if pos<=3:
-            pop[1].n_init= p[1].n_init
+            pop[1].n_init, pop2[1].n_init = pop2[1].n_init, pop[1].n_init
         if pos<=2:
-            pop[1].init= p[1].init
+            pop[1].init, pop2[1].init = pop2[1].init, pop[1].init
         if pos<=1:
-            pop[1].algorithm= p[1].algorithm
+            pop[1].algorithm, pop2[1].algorithm= pop2[1].algorithm, pop[1].algorithm
         if pos==0:
-            pop[1].n_clusters= p[1].n_clusters
+            pop[1].n_clusters, pop2[1].n_clusters =pop2[1].n_clusters, pop[1].n_clusters
 
-        return pop
+        return pop,pop2
 
 class meanshift:
     def __init__(self):
@@ -89,20 +88,20 @@ class meanshift:
         return pop
 
     def cross_over(self,pop,pop2):
-        p = pop2
+
         L = len(self.params)
         pos = random.randint(0,L-1)
 
         if pos<=3:
-            pop[1].max_iter= p[1].max_iter
+            pop[1].max_iter, pop2[1].max_iter = pop2[1].max_iter, pop[1].max_iter
         if pos<=2:
-            pop[1].bandwidth= p[1].bandwidth
+            pop[1].bandwidth, pop2 [1].bandwidth=  pop2[1].bandwidth, pop [1].bandwidth
         if pos<=1:
-            pop[1].bin_seeding= p[1].bin_seeding
+            pop[1].bin_seeding, pop2[1].bin_seeding  =pop2[1].bin_seeding, pop[1].bin_seeding
         if pos==0:
-            pop[1].cluster_all= p[1].cluster_all
+            pop[1].cluster_all, pop2[1].cluster_all =pop2[1].cluster_all, pop[1].cluster_all
 
-        return pop
+        return pop, pop2
 
 class dbscan:
     def __init__(self):
@@ -140,23 +139,22 @@ class dbscan:
         return pop
 
     def cross_over(self,pop,pop2):
-        p = pop2
         L = len(self.params)
         pos = random.randint(0,L-1)
         if pos <=5:
-            pop[1].eps= p[1].eps
+            pop[1].eps, pop2[1].eps = pop2[1].eps, pop[1].eps
         if pos <=4:
-            pop[1].metric= p[1].metric
+            pop[1].metric, pop2[1].metric = pop2[1].metric, pop[1].metric
         if pos<=3:
-            pop[1].min_samples= p[1].min_samples
+            pop[1].min_samples, pop2[1].min_samples =  pop[1].min_samples, pop2[1].min_samples
         if pos<=2:
-            pop[1].algorithm= p[1].algorithm
+            pop[1].algorithm, pop2[1].algorithm = pop2[1].algorithm, pop[1].algorithm
         if pos<=1:
-            pop[1].leaf_size= p[1].leaf_size
+            pop[1].leaf_size, pop2[1].leaf_size = pop2[1].leaf_size, pop[1].leaf_size
         if pos==0:
-            pop[1].p= p[1].p
+            pop[1].p, pop2[1].p = pop2[1].p, pop[1].p 
 
-        return pop
+        return pop, pop2
 
 
 class AffinPropagation:
@@ -198,13 +196,13 @@ class AffinPropagation:
         pos = random.randint(0, L-1)
 
         if pos <= 2:
-            pop[1].damping = p[1].damping
+            pop[1].damping, pop2[1].damping=  pop2[1].damping , pop[1].damping
         if pos <= 1:
-            pop[1].max_iter = p[1].max_iter
+            pop[1].max_iter , p[1].max_iter  = pop2[1].max_iter, pop[1].max_iter
         if pos == 0:
-            pop[1].affinity = p[1].affinity
+            pop[1].affinity , pop2[1].affinity =  pop2[1].affinity , pop[1].affinity
 
-        return pop
+        return pop, pop2
 
 
 class SpectralCluster:
@@ -252,22 +250,22 @@ class SpectralCluster:
         return pop
 
     def cross_over(self, pop, pop2):
-        p = pop2
+
         L = self.L
         pos = random.randint(0, L-1)
 
         if pos <= 4:
-            pop[1].n_clusters = p[1].n_clusters
+            pop[1].n_clusters , pop2[1].n_clusters  = pop2[1].n_clusters , pop[1].n_clusters
         if pos <= 3:
-            pop[1].eigen_solver = p[1].eigen_solver
+            pop[1].eigen_solver , pop2[1].eigen_solver = pop2[1].eigen_solver , pop2[1].eigen_solver
         if pos <= 2:
-            pop[1].n_init = p[1].n_init
+            pop[1].n_init , pop2[1].n_init =  pop2[1].n_init , pop[1].n_init
         if pos <= 1:
-            pop[1].gamma = p[1].gamma
+            pop[1].gamma , pop2[1].gamma = pop2[1].gamma , pop[1].gamma
         if pos == 0:
-            pop[1].affinity = p[1].affinity
+            pop[1].affinity , pop2[1].affinity =  pop2[1].affinity , pop[1].affinity
 
-        return pop
+        return pop, pop2
 
 
 class AgglomerativeCluster:
@@ -307,18 +305,17 @@ class AgglomerativeCluster:
         return pop
 
     def cross_over(self, pop, pop2):
-        p = pop2
         L = self.L
         pos = random.randint(0, L-1)
 
         if pos <= 2:
-            pop[1].n_clusters = p[1].n_clusters
+            pop[1].n_clusters , pop2[1].n_clusters =  pop2[1].n_clusters , pop[1].n_clusters
         if pos <= 1:
-            pop[1].linkage = p[1].linkage
+            pop[1].linkage , pop2[1].linkage =  pop2[1].linkage , pop[1].linkage
         if pos == 0:
-            pop[1].affinity = p[1].affinity
+            pop[1].affinity , pop2[1].affinity = pop2[1].affinity , pop[1].affinity
 
-        return pop
+        return pop, pop2
 
 
 class Optics:
@@ -370,22 +367,22 @@ class Optics:
         return pop
 
     def cross_over(self, pop, pop2):
-        p = pop2
+
         L = self.L
         pos = random.randint(0, L-1)
 
         if pos <= 4:
-            pop[1].min_samples = p[1].min_samples
+            pop[1].min_samples , pop2[1].min_samples = pop2[1].min_samples , pop[1].min_samples
         if pos <= 3:
-            pop[1].max_eps = p[1].max_eps
+            pop[1].max_eps , pop2[1].max_eps = pop2[1].max_eps , pop[1].max_eps 
         if pos <= 2:
-            pop[1].metric = p[1].metric
+            pop[1].metric , pop2[1].metric = pop2[1].metric , pop[1].metric
         if pos <= 1:
-            pop[1].cluster_method = p[1].cluster_method
+            pop[1].cluster_method , pop2[1].cluster_method = pop2[1].cluster_method , pop[1].cluster_method
         if pos == 0:
-            pop[1].algorithm = p[1].algorithm
+            pop[1].algorithm , pop[1].algorithm = pop2[1].algorithm , pop[1].algorithm
 
-        return pop
+        return pop, pop2
 
 
 class BirchClustering:
@@ -428,18 +425,19 @@ class BirchClustering:
         return pop
 
     def cross_over(self, pop, pop2):
-        p = pop2
+
         L = self.L
         pos = random.randint(0, L-1)
 
         if pos <= 3:
-            pop[1].threshold = p[1].threshold
+            pop[1].threshold , pop2[1].threshold =  pop2[1].threshold , pop[1].threshold
         if pos <= 2:
-            pop[1].branching_factor = p[1].branching_factor
+            pop[1].branching_factor , pop2[1].branching_factor = pop2[1].branching_factor , pop[1].branching_factor
         if pos <= 1:
-            pop[1].compute_labels = p[1].compute_labels
+            pop[1].compute_labels , pop2[1].compute_labels=   pop2[1].compute_labels , pop[1].compute_label
         if pos == 0:
-            pop[1].copy = p[1].copy
+            pop[1].copy , pop2[1].copy  = pop2[1].copy , pop[1].copy
+
 
         return pop
 
@@ -467,7 +465,7 @@ class AutoClus:
 
         self.population = []
 
-    def generate_pop(self, size=40):
+    def generate_pop(self, population = [] , size=40):
         """
 
         :param size: size needs to be divisible by # of clustering algorithms
@@ -475,7 +473,6 @@ class AutoClus:
         """
         nr_algorithms = 8  # number of clustering algorithms
         p = int(size / nr_algorithms)
-        population = []
         population.extend(self.kmeans.generate_pop(p+(size-(p*8))))
         population.extend(self.meanshift.generate_pop(p))
         population.extend(self.dbscan.generate_pop(p))
@@ -489,6 +486,8 @@ class AutoClus:
         return population
 
     def evaluate_pop(self):
+        offspring20=int(len(self.population)/5)
+        crossover5= int(offspring20/4)
 
         new_population = []
         vals12 = []
@@ -536,29 +535,35 @@ class AutoClus:
 
 
             
-        top_10=[]
+        top_20=[]
         count=0
         for l in ndf:
             for ix in l:
-                    top_10.append(self.population[indx[ix]])
+                    top_20.append(self.population[indx[ix]])
                     count+=1
-                    if count >= 10:
+                    if count >= offspring20:
                         break
-            if count >= 10:
+            if count >= offspring20:
                 break
 
-        #    if len(l)+len(top_20)<=2:
-        #        top_20.extend()
+        for c in range(0,crossover5-2,2):
+            new_population.extend(self.cross_over(top_20[c],top_20[c+1]))
 
-        print(top_10)
+        for m in range(crossover5,offspring20):
+            if random.randint(1,3)==1:
+                new_population.extend(self.mutation([top_20[m]]))
+            else:
+                new_population.append(top_20[m])
+        print(len(new_population))
+        print(new_population)
 
     def cross_over(self, pop1, pop2):
         if pop1[0] != pop2[0]:
             return None
         else:
             model = eval("self."+pop1[0])
-            n_pop = model.cross_over(pop1, pop2)
-            return n_pop
+            pop1,pop2 = model.cross_over(pop1, pop2)
+            return [pop1,pop2]
 
     def mutation(self, population=[]):
         new_population = []
@@ -571,8 +576,8 @@ class AutoClus:
         return new_population
 
 auto = AutoClus(dfile="test.csv", cvi1=["SDBW",-1],cvi2=["modified_hubert_t",1],cvi3=["Banfeld_Raferty",-1])
-auto.generate_pop(50)
-
-p0 = auto.mutation(auto.population)
-p1 = auto.cross_over(auto.population[0],auto.population[1])
+auto.generate_pop(size=50)
+auto.evaluate_pop()
+#p0 = auto.mutation(auto.population)
+#p1,p2 = auto.cross_over(auto.population[0],auto.population[1])
 
