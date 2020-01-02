@@ -444,7 +444,7 @@ class BirchClustering:
 
 class AutoClus:
 
-    def __init__(self,dfile="",cvi1=["davies_bouldin_score",-1],cvi2=["davies_bouldin_score",-1],cvi3=["davies_bouldin_score",-1]):
+    def __init__(self,dfile="",cvi1=["davies_bouldin_score",-1],cvi2=["davies_bouldin_score",-1],cvi3=["davies_bouldin_score",-1],iterations = 10,size=50):
         data = pd.read_csv(dfile, header=None, na_values='?')
         self.data = data
 
@@ -465,14 +465,20 @@ class AutoClus:
 
         self.population = []
 
-    def generate_pop(self, population = [] , size=40):
+        self.iterations= iterations
+        self.size=size
+
+    def generate_pop(self, population = [] , size=None):
         """
 
         :param size: size needs to be divisible by # of clustering algorithms
         :return:
         """
+        if not size:
+            size=self.size
         nr_algorithms = 8  # number of clustering algorithms
         p = int(size / nr_algorithms)
+        
         population.extend(self.kmeans.generate_pop(p+(size-(p*8))))
         population.extend(self.meanshift.generate_pop(p))
         population.extend(self.dbscan.generate_pop(p))
@@ -483,80 +489,84 @@ class AutoClus:
         population.extend(self.birch.generate_pop(p))
 
         self.population = population
+
+        
         return population
 
     def evaluate_pop(self):
         offspring20=int(len(self.population)/5)
         crossover5= int(offspring20/4)
-
-        new_population = []
-        vals12 = []
-        vals3 = []
-        indx = []
-        for i in range(len(self.population)):
-
-            Metrics = {}
-            try:
-                clustering = self.population[i][1].fit(self.data)
-            except:
-                continue
+        for iteration in range(self.iterations):
+            new_population = []
+            vals12 = []
+            vals3 = []
+            indx = []
             
-            try:
-                if len(set(list(clustering.labels_))) == 1 or len(set(list(clustering.labels_)))>=(len(self.data)-1):
+            for i in range(len(self.population)):
+
+                Metrics = {}
+                try:
+                    clustering = self.population[i][1].fit(self.data)
+                except:
                     continue
-            except:
-                continue
-            try:
-                sample_size = int(len(self.data)*0.1)
-                if sample_size < 100:
-                    sample_size = len(self.data)
-                labels = list(clustering.labels_)
-
-                for u in range(len(labels)):
-                    if labels[u]<0:
-                        labels[u]=0
-
-
-                v= validation(np.asmatrix(self.data).astype(np.float),labels )
-                Metrics=v.run_list([self.cvi1[0],self.cvi2[0],self.cvi3[0]])
-                if "SDBW" in [self.cvi1[0],self.cvi2[0]]:
-                    sdbw_c = sdbw(self.data, clustering.labels_, clustering.cluster_centers_)
-                    Metrics["SDBW"] = sdbw_c.sdbw_score()
-
-                indx.append(i)
-                vals12.append([Metrics[self.cvi1[0]]*self.cvi1[1],Metrics[self.cvi2[0]]*self.cvi2[1]])
-                vals3.append(Metrics[self.cvi3[0]]*self.cvi3[1])
                 
-            except:
-                continue
+                try:
+                    if len(set(list(clustering.labels_))) == 1 or len(set(list(clustering.labels_)))>=(len(self.data)-1):
+                        continue
+                except:
+                    continue
+                try:
+                    sample_size = int(len(self.data)*0.1)
+                    if sample_size < 100:
+                        sample_size = len(self.data)
+                    labels = list(clustering.labels_)
 
-        ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points =vals12)
-        ndf.reverse() 
+                    for u in range(len(labels)):
+                        if labels[u]<0:
+                            labels[u]=0
 
 
-            
-        top_20=[]
-        count=0
-        for l in ndf:
-            for ix in l:
-                    top_20.append(self.population[indx[ix]])
-                    count+=1
-                    if count >= offspring20:
-                        break
-            if count >= offspring20:
-                break
+                    v= validation(np.asmatrix(self.data).astype(np.float),labels )
+                    Metrics=v.run_list([self.cvi1[0],self.cvi2[0],self.cvi3[0]])
+                    if "SDBW" in [self.cvi1[0],self.cvi2[0]]:
+                        sdbw_c = sdbw(self.data, clustering.labels_, clustering.cluster_centers_)
+                        Metrics["SDBW"] = sdbw_c.sdbw_score()
 
-        for c in range(0,crossover5-2,2):
-            new_population.extend(self.cross_over(top_20[c],top_20[c+1]))
+                    indx.append(i)
+                    vals12.append([Metrics[self.cvi1[0]]*self.cvi1[1],Metrics[self.cvi2[0]]*self.cvi2[1]])
+                    vals3.append(Metrics[self.cvi3[0]]*self.cvi3[1])
+                    
+                except:
+                    continue
 
-        for m in range(crossover5,offspring20):
-            if random.randint(1,3)==1:
-                new_population.extend(self.mutation([top_20[m]]))
-            else:
-                new_population.append(top_20[m])
+            ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points =vals12)
+            ndf.reverse() 
+
+
+                
+            top_20=[]
+            count=0
+            for l in ndf:
+                for ix in l:
+                        top_20.append(self.population[indx[ix]])
+                        count+=1
+                        if count >= offspring20:
+                            break
+                if count >= offspring20:
+                    break
+
+            for c in range(0,crossover5-2,2):
+                new_population.extend(self.cross_over(top_20[c],top_20[c+1]))
+
+            for m in range(crossover5,offspring20):
+                if random.randint(1,3)==1:
+                    new_population.extend(self.mutation([top_20[m]]))
+                else:
+                    new_population.append(top_20[m])
+
+            self.generate_pop(population=new_population,size=(self.size-len(new_population )))
         print(len(new_population))
         print(new_population)
-
     def cross_over(self, pop1, pop2):
         if pop1[0] != pop2[0]:
             return None
@@ -575,8 +585,8 @@ class AutoClus:
 
         return new_population
 
-auto = AutoClus(dfile="test.csv", cvi1=["SDBW",-1],cvi2=["modified_hubert_t",1],cvi3=["Banfeld_Raferty",-1])
-auto.generate_pop(size=50)
+auto = AutoClus(dfile="test.csv", cvi1=["SDBW",-1],cvi2=["modified_hubert_t",1],cvi3=["Banfeld_Raferty",-1],size=50)
+auto.generate_pop()
 auto.evaluate_pop()
 #p0 = auto.mutation(auto.population)
 #p1,p2 = auto.cross_over(auto.population[0],auto.population[1])
