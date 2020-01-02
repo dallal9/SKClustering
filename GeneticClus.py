@@ -19,7 +19,7 @@ class kmeans:
     def generate_pop(self,size=1):
         population=[]
         for i in range(size+1):
-            n_clusters=random.choice(list(range(2,min(int(0.3*self.len_data),101))))
+            n_clusters=random.choice([2,60,70])#random.choice(list(range(2,min(int(0.3*self.len_data),101))))
             init =  random.choice(['k-means++', 'random'])
             algorithm =  random.choice(['auto', 'full', 'elkan'])
             n_init = random.choice(list(range(10,25)))
@@ -541,7 +541,7 @@ class AutoClus:
 
             ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points =vals12)
             ndf.reverse() 
-
+            #eval3_ind=sorted(range(len(vals3)), key=lambda k: vals3[k])
 
                 
             top_20=[]
@@ -563,10 +563,11 @@ class AutoClus:
                     new_population.extend(self.mutation([top_20[m]]))
                 else:
                     new_population.append(top_20[m])
-
+            self.population=[]        
             self.generate_pop(population=new_population,size=(self.size-len(new_population )))
-        print(len(new_population))
-        print(new_population)
+        print(len(self.population))
+        print(top_20[:3])
+
     def cross_over(self, pop1, pop2):
         if pop1[0] != pop2[0]:
             return None
@@ -585,7 +586,7 @@ class AutoClus:
 
         return new_population
 
-auto = AutoClus(dfile="test.csv", cvi1=["SDBW",-1],cvi2=["modified_hubert_t",1],cvi3=["Banfeld_Raferty",-1],size=50)
+auto = AutoClus(dfile="test.csv", cvi1=["i_index",1],cvi2=["Ratkowsky_Lance",1],cvi3=["Banfeld_Raferty",1],size=50)
 auto.generate_pop()
 auto.evaluate_pop()
 #p0 = auto.mutation(auto.population)
