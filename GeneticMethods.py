@@ -13,7 +13,7 @@ class kmeans:
 
     def generate_pop(self,size=1):
         population=[]
-        for i in range(size+1):
+        for i in range(size):
             n_clusters=random.choice([2,60,70])#random.choice(list(range(2,min(int(0.3*self.len_data),101))))
             init =  random.choice(['k-means++', 'random'])
             algorithm =  random.choice(['auto', 'full', 'elkan'])
@@ -58,7 +58,7 @@ class meanshift:
 
     def generate_pop(self,size=1):
         population=[]
-        for i in range(size+1):
+        for i in range(size):
             cluster_all= random.choice([True,False])
             bin_seeding =  random.choice([True,False])
             bandwidth =  random.choice([None,1,2,3,4,5])
@@ -104,7 +104,7 @@ class dbscan:
 
     def generate_pop(self,size=1):
         population=[]
-        for i in range(size+1):
+        for i in range(size):
             eps= random.choice([0.3,0.5,0.8,1,2,3,4,5,6,7,8,9,10])
             min_samples =  random.choice([5,10,15,20,30,50,100,150,200])
             metric =  random.choice( ['cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan'])
@@ -162,7 +162,7 @@ class AffinPropagation:
     @staticmethod
     def generate_pop(size=1):
         population = []
-        for i in range(size+1):
+        for i in range(size):
             damping = random.uniform(0.5, 1)
             max_iter = random.randint(100, 300)
             affinity = random.choice(['euclidean', 'precomputed'])
@@ -211,7 +211,7 @@ class SpectralCluster:
     @staticmethod
     def generate_pop(size=1):
         population = []
-        for i in range(size+1):
+        for i in range(size):
             n_clusters = random.randint(2, 100)
             eigen_solver = random.choice([None, 'arpack', 'lobpcg', 'amg'])
             n_init = random.randint(1, 20)
@@ -273,7 +273,7 @@ class AgglomerativeCluster:
     @staticmethod
     def generate_pop(size=1):
         population = []
-        for i in range(size+1):
+        for i in range(size):
             n_clusters = random.randint(2, 100)
             linkage = random.choice(['ward', 'complete', 'average', 'single'])
             affinity = random.choice(['euclidean', 'l1', 'l2',
@@ -324,7 +324,7 @@ class Optics:
     @staticmethod
     def generate_pop(size=1):
         population = []
-        for i in range(size+1):
+        for i in range(size):
             min_samples = random.uniform(0, 1)
             max_eps = random.choice([np.inf, random.uniform(1, 100)])
             metric = random.choice(['cityblock', 'cosine', 'euclidean',
@@ -391,7 +391,7 @@ class BirchClustering:
     @staticmethod
     def generate_pop(size=1):
         population = []
-        for i in range(size+1):
+        for i in range(size):
             threshold = random.uniform(0.2, 2)
             branching_factor = random.randint(1, 100)
             compute_labels = random.choice([True, False])
