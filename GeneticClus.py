@@ -4,14 +4,15 @@ import pandas as pd
 import pygmo as pg
 from cvi import Validation
 from sdbw import sdbw
+import warnings
 from GeneticMethods import kmeans, meanshift, dbscan, AffinPropagation,\
     SpectralCluster, AgglomerativeCluster, Optics, BirchClustering
 
 
 class AutoClus:
 
-    def __init__(self, dfile="", iterations=10, size=50, cvi1=["davies_bouldin_score", -1],
-                 cvi2=["davies_bouldin_score", -1], cvi3=["davies_bouldin_score", -1]):
+    def __init__(self, dfile, cvi1, cvi2, cvi3,
+                 iterations=10, size=50):
         """
         Class initialized with:
         - dfile: input data file name (with no labels)
@@ -37,10 +38,13 @@ class AutoClus:
         self.cvi2 = cvi2
         self.cvi3 = cvi3
 
-        self.population = []
-
         self.iterations = iterations
         self.size = size
+
+        # generate the initial random population
+        self.population = self.generate_pop()
+
+        warnings.filterwarnings("ignore")
 
     def generate_pop(self, population=None):
         """
@@ -54,17 +58,27 @@ class AutoClus:
         else:
             size = self.size - len(population)
 
-        nr_algorithms = 8  # number of clustering algorithms
-        p = int(size / nr_algorithms)
+        # clustering algorithms
+        algorithms = ['kmeans',
+                      'meanshift',
+                      'dbscan'#, leaving a few algorithms for testing
+                      # 'affinity_propagation',
+                      # 'spectral_clustering',  throws an error
+                      # 'agglomerative_clustering',
+                      # 'optics',
+                      # 'birch'
+                      ]
+
+        nr_algorithms = len(algorithms)
+
+        p = size // nr_algorithms
         
-        population.extend(self.kmeans.generate_pop(p+(size-p*nr_algorithms)))
-        population.extend(self.meanshift.generate_pop(p))
-        population.extend(self.dbscan.generate_pop(p))
-        population.extend(self.affinity_propagation.generate_pop(p))
-        population.extend(self.spectral_clustering.generate_pop(p))
-        population.extend(self.agglomerative_clustering.generate_pop(p))
-        population.extend(self.optics.generate_pop(p))
-        population.extend(self.birch.generate_pop(p))
+        population.extend(self.kmeans.generate_pop(p + (size - p * nr_algorithms)))
+
+        for algorithm in algorithms[1:]:
+            eval('population.extend(self.' +
+                 algorithm +
+                 '.generate_pop(p))')
 
         self.population = population
         
@@ -78,7 +92,6 @@ class AutoClus:
         data = self.data
         population = self.population
         size = self.size
-
 
         # calculate the integer value for the offspring out of the total size (20% out of total population)
         offspring20 = size // 5
@@ -95,43 +108,51 @@ class AutoClus:
             
             for i in range(size):
 
-                try:
-                    # process the cluster of each configuration in the population
-                    clustering = population[i][1].fit(data)
-                except:
-                    continue
-                
-                try:
-                    # get the clustering labels
-                    labels = list(clustering.labels_)
-                    # if the output has one cluster or n clusters, ignore it
-                    if len(set(labels)) == 1 or len(set(labels)) >= (len(data)-1):
-                        continue
-                except:
-                    continue
-                try:
-                    sample_size = int(len(data)*0.1)  # what is the use of this part???
-                    if sample_size < 100:
-                        sample_size = len(data)
+                # try:
+                # process the cluster of each configuration in the population
+                clustering = population[i][1].fit(data)
+                # except:
+                #     continue
 
-                    for u in range(len(labels)):
-                        if labels[u] < 0:
-                            labels[u] = 0
-
-                    # evaluate clustering
-                    validate = Validation(np.asmatrix(data).astype(np.float), labels)
-                    metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
-                    if "SDBW" in [cvi1[0], cvi2[0]]:
-                        sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
-                        metric_values["SDBW"] = sdbw_c.sdbw_score()
-
-                    indx.append(i)
-                    # first two eval metrics
-                    vals12.append([metric_values[cvi1[0]]*cvi1[1], metric_values[cvi2[0]]*cvi2[1]])
-                    vals3.append(metric_values[cvi3[0]]*cvi3[1])  # third eval metric
-                    
-                except:
+                # try:
+                # get the clustering labels
+                labels = list(clustering.labels_)
+                # if the output has one cluster or n clusters, ignore it
+                if len(set(labels)) == 1 or len(set(labels)) >= (len(data)-1):
                     continue
+                # except:
+                #     continue
+
+                # try:
+                sample_size = int(len(data)*0.1)  # what is the use of this part???
+                if sample_size < 100:             #
+                    sample_size = len(data)       #
+
+                # some algorithms return cluster labels
+                # where the label numbering starts from -1
+                # we increment such labels with one,
+                # otherwise (in case of the old solution)
+                # we have 0 labels more than needed
+                if -1 in labels:
+                    labels = list(np.array(labels) + 1)
+                # for u in range(len(labels)):
+                #     if labels[u] < 0:
+                #         labels[u] = 0
+
+                # evaluate clustering
+                validate = Validation(np.asmatrix(data).astype(np.float), labels)
+                metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
+                if "SDBW" in [cvi1[0], cvi2[0]]:
+                    sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
+                    metric_values["SDBW"] = sdbw_c.sdbw_score()
+
+                indx.append(i)
+                # first two eval metrics
+                vals12.append([metric_values[cvi1[0]]*cvi1[1], metric_values[cvi2[0]]*cvi2[1]])
+                vals3.append(metric_values[cvi3[0]]*cvi3[1])  # third eval metric
+
+                # except:
+                #     continue
             # pareto front optimization to order the configurations using the two eval metrics
             ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points=vals12)
             ndf.reverse() 
@@ -167,9 +188,9 @@ class AutoClus:
         return top_20  # return the final top 20 solutions
 
     def cross_over(self, pop1, pop2):
-        '''
+        """
         function to do cross-over between two populations 
-        '''
+        """
         if pop1[0] != pop2[0]:
             return None
         else:
@@ -178,9 +199,9 @@ class AutoClus:
             return [pop1, pop2]
 
     def mutation(self, population):
-        '''
+        """
         function to do mutation for a population
-        '''
+        """
         new_population = []
         for pop in population:
             model = eval("self."+pop[0])
@@ -191,8 +212,10 @@ class AutoClus:
         return new_population
 
 
-auto = AutoClus(dfile="test.csv", cvi1=["i_index", 1], cvi2=["ratkowsky_lance", 1],
-                cvi3=["banfeld_raferty", 1], size=50)  # initialize class object
-auto.generate_pop()  # generate random population
-auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
-# print(len(auto.population))
+auto = AutoClus(dfile="test.csv",
+                cvi1=["i_index", 1],
+                cvi2=["ratkowsky_lance", 1],
+                cvi3=["banfeld_raferty", 1],
+                size=50)  # initialize class object
+top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
+print(top_20)
