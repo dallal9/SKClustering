@@ -14,7 +14,7 @@ class kmeans:
     def generate_pop(self,size=1):
         population=[]
         for i in range(size):
-            n_clusters=random.choice([2,60,70])#random.choice(list(range(2,min(int(0.3*self.len_data),101))))
+            n_clusters=random.choice(list(range(2,min(int(0.3*self.len_data),101))))
             init =  random.choice(['k-means++', 'random'])
             algorithm =  random.choice(['auto', 'full', 'elkan'])
             n_init = random.choice(list(range(10,25)))
@@ -107,7 +107,7 @@ class dbscan:
         for i in range(size):
             eps= random.choice([0.3,0.5,0.8,1,2,3,4,5,6,7,8,9,10])
             min_samples =  random.choice([5,10,15,20,30,50,100,150,200])
-            metric =  random.choice( ['cityblock', 'cosine', 'euclidean', 'l1', 'l2', 'manhattan'])
+            metric =  random.choice( ['cityblock', 'euclidean', 'l1', 'l2', 'manhattan'])
             algorithm = random.choice(["auto","ball_tree","kd_tree","brute"])
             leaf_size=random.choice([5,10,15,20,25,30,40,50,100,150,200])
             p = leaf_size=random.choice([1,2,3])
@@ -428,9 +428,9 @@ class BirchClustering:
         if pos <= 2:
             pop[1].branching_factor , pop2[1].branching_factor = pop2[1].branching_factor , pop[1].branching_factor
         if pos <= 1:
-            pop[1].compute_labels , pop2[1].compute_labels=   pop2[1].compute_labels , pop[1].compute_label
+            pop[1].compute_labels , pop2[1].compute_labels=   pop2[1].compute_labels , pop[1].compute_labels
         if pos == 0:
             pop[1].copy , pop2[1].copy  = pop2[1].copy , pop[1].copy
 
 
-        return pop
+        return pop, pop2
