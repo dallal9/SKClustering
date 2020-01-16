@@ -1,18 +1,21 @@
 import random 
+from sklearn import metrics
 import numpy as np
 import pandas as pd
+import csv
 import pygmo as pg
+from scipy.stats import spearmanr
 from cvi import Validation
 from sdbw import sdbw
+from GeneticMethods import kmeans, meanshift, dbscan, AffinPropagation, SpectralCluster, AgglomerativeCluster, Optics, BirchClustering
+from sklearn import metrics
+from operator import itemgetter
+from sklearn.impute import SimpleImputer
+import time
 import warnings
-from GeneticMethods import kmeans, meanshift, dbscan, AffinPropagation,\
-    SpectralCluster, AgglomerativeCluster, Optics, BirchClustering
-
-
 class AutoClus:
 
-    def __init__(self, dfile, cvi1, cvi2, cvi3,
-                 iterations=10, size=50):
+    def __init__(self, dfile, cvi1, cvi2, cvi3,y=False, iterations=10, size=50):
         """
         Class initialized with:
         - dfile: input data file name (with no labels)
@@ -22,7 +25,20 @@ class AutoClus:
         - size: size of the population used
         """
         data = pd.read_csv(dfile, header=None, na_values='?') 
-        self.data = data
+
+
+        if y:
+            self.y = data.iloc[:,-1]
+            self.data = pd.DataFrame(data.iloc[:, :-1])
+            
+        else:
+            self.data = data
+
+        if  self.data.isnull().values.any():
+            imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+            imp = imp.fit(self.data)
+            self.data = pd.DataFrame(imp.transform(self.data))
+
 
         # initialize each cluster method to be used by the genetic optimization code.
         self.kmeans = kmeans(len(data))
@@ -57,16 +73,16 @@ class AutoClus:
             size = self.size
         else:
             size = self.size - len(population)
-
+        
         # clustering algorithms
         algorithms = ['kmeans',
                       'meanshift',
-                      'dbscan'#, leaving a few algorithms for testing
-                      # 'affinity_propagation',
-                      # 'spectral_clustering',  throws an error
-                      # 'agglomerative_clustering',
-                      # 'optics',
-                      # 'birch'
+                      'dbscan',
+                       'affinity_propagation',
+                       'spectral_clustering',  
+                       'agglomerative_clustering',
+                       'optics',
+                       'birch'
                       ]
 
         nr_algorithms = len(algorithms)
@@ -90,8 +106,9 @@ class AutoClus:
         cvi2 = self.cvi2
         cvi3 = self.cvi3
         data = self.data
-        population = self.population
         size = self.size
+
+        self.scores=[] #list to store the evaluation score of the best model in each iteration
 
         # calculate the integer value for the offspring out of the total size (20% out of total population)
         offspring20 = size // 5
@@ -99,7 +116,7 @@ class AutoClus:
         crossover5 = size // 20
 
         for iteration in range(self.iterations):  # start the optimization
-
+            population = self.population
             new_population = []
 
             vals12 = []  # empty list to store the output for the first two evaluation metrics
@@ -108,20 +125,20 @@ class AutoClus:
             
             for i in range(size):
 
-                # try:
+                try:
                 # process the cluster of each configuration in the population
-                clustering = population[i][1].fit(data)
-                # except:
-                #     continue
-
-                # try:
-                # get the clustering labels
-                labels = list(clustering.labels_)
-                # if the output has one cluster or n clusters, ignore it
-                if len(set(labels)) == 1 or len(set(labels)) >= (len(data)-1):
+                    clustering = population[i][1].fit(data)
+                except:
                     continue
-                # except:
-                #     continue
+
+                try:
+                    # get the clustering labels
+                    labels = list(clustering.labels_)
+                    # if the output has one cluster or n clusters, ignore it
+                    if len(set(labels)) == 1 or len(set(labels)) >= (len(data)-1):
+                        continue
+                except:
+                     continue
 
                 # try:
                 sample_size = int(len(data)*0.1)  # what is the use of this part???
@@ -150,7 +167,11 @@ class AutoClus:
                 # first two eval metrics
                 vals12.append([metric_values[cvi1[0]]*cvi1[1], metric_values[cvi2[0]]*cvi2[1]])
                 vals3.append(metric_values[cvi3[0]]*cvi3[1])  # third eval metric
-
+                try:
+                    self.population[i][2]=metric_values[cvi3[0]]*cvi3[1]
+                except:
+                    self.population[i].append(metric_values[cvi3[0]]*cvi3[1])
+                indx.append(i)
                 # except:
                 #     continue
             # pareto front optimization to order the configurations using the two eval metrics
@@ -168,6 +189,16 @@ class AutoClus:
                         break
                 if count >= offspring20:
                     break
+                    
+            top_20=sorted(top_20, key=itemgetter(2),reverse=True)
+
+            try:
+                score=self.get_nmi_score(top_20[0][1])
+                
+            except:
+                score=0.0
+
+            self.scores.append(score)  
 
             # do cross over
             for c in range(0, crossover5-2, 2):
@@ -184,8 +215,11 @@ class AutoClus:
 
             # update population and start new iteration
             self.generate_pop(population=new_population)
-
+            
         return top_20  # return the final top 20 solutions
+    def get_nmi_score(self,model):
+        nmi=metrics.normalized_mutual_info_score(self.y ,model.labels_)
+        return nmi
 
     def cross_over(self, pop1, pop2):
         """
@@ -212,10 +246,10 @@ class AutoClus:
         return new_population
 
 
-auto = AutoClus(dfile="test.csv",
-                cvi1=["i_index", 1],
-                cvi2=["ratkowsky_lance", 1],
-                cvi3=["banfeld_raferty", 1],
-                size=50)  # initialize class object
-top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
-print(top_20)
+
+
+t1=time.time()
+auto = AutoClus(dfile="./Datasets/processed/hepta.csv",y=True ,cvi1=["i_index",1],cvi2=["ratkowsky_lance",1],cvi3=["banfeld_raferty",-1],size=50,iterations=10) #initialize class object
+top_20 = auto.evaluate_pop() #evaluate population and return top 20% after n iterations 
+print(auto.scores)
+print((time.time()-t1)/60)
