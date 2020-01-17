@@ -63,7 +63,7 @@ class Validation:
         methods.remove('validation_metrics_available')
         method_dict = {}
         for method in methods:
-            if not re.match('__', method) and not re.match('_validation__', method):
+            if not re.match('__', method) and not re.match('_Validation__', method):
                 method_dict[method] = ''
         return method_dict
 
@@ -99,7 +99,8 @@ class Validation:
         """ Banfeld-Raferty index is the weighted sum of the logarithms
          of the traces of the variance-covariance matrix of each cluster
         """
-        self.description = 'Weighted sum of the logarithms of the traces of the variance-covariance matrix of each cluster'
+        self.description = 'Weighted sum of the logarithms of the traces of ' \
+                           'the variance-covariance matrix of each cluster'
         sum_total = 0
         num_cluster = max(self.class_label) + 1
 
@@ -126,10 +127,13 @@ class Validation:
 
     def silhouette(self):
         """
-        Silhouette: Compactness and connectedness combination that measures a ratio of within cluster distances to closest neighbors
+        Silhouette: Compactness and connectedness combination that
+        measures a ratio of within cluster distances to closest neighbors
         outside of cluster. This uses sklearn.metrics version of the Silhouette.
         """
-        self.description = 'Silhouette: A combination of connectedness and compactness that measures within versus to the nearest neighbor outside a cluster. A smaller value, the better the solution'
+        self.description = 'Silhouette: A combination of connectedness and compactness' \
+                           ' that measures within versus to the nearest neighbor outside a cluster.' \
+                           ' A smaller value, the better the solution'
 
         metric = metrics.silhouette_score(self.data_matrix, self.class_label, metric='euclidean')
         self.validation = metric
@@ -141,7 +145,8 @@ class Validation:
 
     def baker_hubert_gamma(self):
         """
-        Baker-Hubert Gamma Index: A measure of compactness, based on similarity between points in a cluster, compared to similarity
+        Baker-Hubert Gamma Index: A measure of compactness,
+        based on similarity between points in a cluster, compared to similarity
         with points in other clusters
         """
         self.description = 'Gamma Index: a measure of compactness'
@@ -195,7 +200,7 @@ class Validation:
                 # compute xk
                 xCluster[:, j] = columnVec - columnCenter
             # add to wg
-            wg += np.dot(np.transpose(xCluster), xCluster)
+            wg = wg + np.dot(np.transpose(xCluster), xCluster)
         # compute data scatter matrix
         for i in range(attributes):
             columnVec = self.data_matrix[:, i]
@@ -238,7 +243,8 @@ class Validation:
 
     def g_plus_index(self):
         """
-        The G_plus index, the proportion of discordant pairs among all the pairs of distinct point, a measure of connectedness
+        The G_plus index, the proportion of discordant pairs among
+        all the pairs of distinct point, a measure of connectedness
         """
         self.description = "The G_plus index, a measure of connectedness"
         sminus = 0
@@ -283,7 +289,7 @@ class Validation:
                 # compute xk
                 xCluster[:, j] = columnVec - columnCenter
             # add to wg
-            wg += np.dot(np.transpose(xCluster), xCluster)
+            wg = wg + np.dot(np.transpose(xCluster), xCluster)
         # compute fitness
         self.validation = math.pow(numCluster, 2) * np.linalg.det(wg)
         return self.validation
@@ -601,7 +607,7 @@ class Validation:
                 # compute xk
                 xCluster[:, j] = columnVec - columnCenter
             # compute wgk
-            wg += np.dot(np.transpose(xCluster), xCluster)
+            wg = wg + np.dot(np.transpose(xCluster), xCluster)
         # compute bg
         bg = np.dot(np.transpose(b), b)
         # compute fitness
@@ -648,7 +654,7 @@ class Validation:
                 list_dis = distance.cdist(memberArray, tempList)
                 sumRm += (distance.euclidean(member, clusterCenter)) / min(min(list_dis))
             # compute the sum
-            sum += max([0, len(indices) - sumRm])
+            sum = sum + max([0, len(indices) - sumRm])
         # compute the fitness
         self.validation = sum / numObj
         return self.validation
@@ -825,7 +831,7 @@ class Validation:
         self.validation = sumNorm / (numObject * pow(minDis, 2))
         return self.validation
 
-    ## density function for SDBW
+    # density function for SDBW
     @staticmethod
     def __density(a, b, stdev):
         dis = distance.euclidean(a, b)
@@ -892,7 +898,7 @@ class Validation:
                     combined = np.concatenate((temp_c1, temp_c2))
                     for member in combined:
                         sumDensityCombine += Validation.__density(member, midPoint, stdev)
-                    sumTemp += sumDensityCombine / max([sumDensity1, sumDensity2])
+                    sumTemp = sumTemp + sumDensityCombine / max([sumDensity1, sumDensity2])
             sumDens += sumTemp
         # compute scat and dens_bw
         scat = sumScat / numCluster
@@ -958,6 +964,7 @@ class Validation:
     def run_list(self, cvi_list=["banfeld_raferty", "modified_hubert_t", "point_biserial", "davies_bouldin", ""]):
         metric_scores = {}
         for key in cvi_list:
+            print(key)
             metric_scores[key] = eval("self." + key + "()")
 
         return metric_scores

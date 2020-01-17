@@ -16,7 +16,7 @@ class AutoClus:
         """
         Class initialized with:
         - dfile: input data file name (with no labels)
-        - cvi1, cvi2, cvi3: a list of first a string representing cvi name
+        - cvi1, cvi2, cvi3: a tuple of first a string representing cvi name
          and integer value 1 if the score is maximization and -1 if it's minimization (the smaller the better)
         - iterations: number of iterations to be performed by the model
         - size: size of the population used
@@ -141,7 +141,9 @@ class AutoClus:
 
                 # evaluate clustering
                 validate = Validation(np.asmatrix(data).astype(np.float), labels)
+                print(i, 'in')
                 metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
+                print(i, 'out')
                 if "SDBW" in [cvi1[0], cvi2[0]]:
                     sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
                     metric_values["SDBW"] = sdbw_c.sdbw_score()
@@ -212,10 +214,59 @@ class AutoClus:
         return new_population
 
 
-auto = AutoClus(dfile="test.csv",
-                cvi1=["i_index", 1],
-                cvi2=["ratkowsky_lance", 1],
-                cvi3=["banfeld_raferty", 1],
-                size=50)  # initialize class object
-top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
-print(top_20)
+# cvi_set = [('baker_hubert_gamma', 1),
+#            ('ball_hall', 1),
+#            ('banfeld_raferty', -1),
+#            ('c_index', -1),
+#            ('calinski_harabasz', 1),
+#            ('davies_bouldin', -1),
+#            ('det_ratio', 1),
+#            ('dunns_index', 1),
+#            ('g_plus_index', 1),
+#            ('i_index', -1),
+#            ('ksq_detw_index', 1),
+#            ('log_det_ratio', 1),
+#            ('log_ss_ratio', 1),
+#            ('mc_clain_rao', -1),
+#            ('modified_hubert_t', 1),
+#            ('pbm_index', 1),
+#            ('point_biserial', 1),
+#            ('r_squared', 1),
+#            ('ratkowsky_lance', 1),
+#            ('ray_turi', -1),
+#            ('root_mean_square', 1),
+#            ('s_dbw', -1),
+#            ('scott_symons', -1),
+#            ('tau_index', 1),
+#            ('trace_wib', 1),
+#            ('wemmert_gancarski', 1),
+#            ('trace_w', 1),
+#            ('silhouette', 1),
+#            ('xie_beni', -1)]
+#
+#
+# len_y = len(cvi_set)
+# nr_filters = len_y - 3 + 1
+# for i in range(nr_filters):
+#     # if i in range(26):
+#     #     continue
+#     cvi1, cvi2, cvi3 = cvi_set[i:(3 + i)]
+#     auto = AutoClus(dfile="test.csv",
+#                     cvi1=cvi1,
+#                     cvi2=cvi2,
+#                     cvi3=cvi3,
+#                     iterations=2,
+#                     size=23)  # initialize class object
+#     top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
+#     print(i, 'cvi_done', '\n')
+
+# auto = AutoClus(dfile="test.csv",
+#                 cvi1=cvi1,
+#                 cvi2=cvi2,
+#                 cvi3=cvi3,
+#                 iterations=2,
+#                 size=23)  # initialize class object
+# top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
+# print(i, top_20, '\n')
+
+
