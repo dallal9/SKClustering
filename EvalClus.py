@@ -13,7 +13,7 @@ from sklearn.metrics.cluster import contingency_matrix
 import glob
 import os 
 import pandas as pd
-from cvi import validation
+from cvi import Validation
 import sys
 sys.path.insert(0,'other-cvi')
 from sdbw import sdbw
@@ -36,7 +36,7 @@ class evaluate:
 
             self.failed.flush()
 
-      def run_all(self,path="./Datasets/processed/",verbose = False):
+      def run_all(self,path="./Datasets/processed/",verbose = False,nmi=False):
 
             if os.path.exists(path):
                   
@@ -80,7 +80,7 @@ class evaluate:
                               if len(list(set(self.estimator.labels_)))/len(self.data) >0.75:
                                     continue
                               #try:
-                              Metric= self.eval_metrics()
+                              Metric= self.eval_metrics(nmi)
 
                               self.res[self.data_label]=Metric
 
@@ -145,12 +145,17 @@ class evaluate:
       def predict_data(self):
             self.estimator.predict(self.data)
       
-      def eval_metrics(self):
+      def eval_metrics(self, nmi=False):
+            if nmi: 
+                  Metrics={}
+                  Metrics["nmi"]=metrics.normalized_mutual_info_score(self.y ,self.estimator.labels_)
+                  return Metrics
+
             sample_size=int(len(self.data)*0.1)
             if sample_size<100:
                   sample_size=len(self.data)
        
-            v= validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
+            v= Validation(np.asmatrix(self.data).astype(np.float), list(self.estimator.labels_))
             
             Metrics = v.run_all()
             try:
