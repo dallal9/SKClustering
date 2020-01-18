@@ -248,8 +248,8 @@ class AutoClus:
 
 
 
-t1=time.time()
-auto = AutoClus(dfile="./Datasets/processed/hepta.csv",y=True ,cvi1=["i_index",1],cvi2=["ratkowsky_lance",1],cvi3=["banfeld_raferty",-1],size=50,iterations=10) #initialize class object
-top_20 = auto.evaluate_pop() #evaluate population and return top 20% after n iterations 
-print(auto.scores)
-print((time.time()-t1)/60)
+# t1=time.time()
+# auto = AutoClus(dfile="./Datasets/processed/jain.csv",y=True ,cvi1=["i_index",1],cvi2=["ratkowsky_lance",1],cvi3=["banfeld_raferty",-1],size=50,iterations=10) #initialize class object
+# top_20 = auto.evaluate_pop() #evaluate population and return top 20% after n iterations 
+# print(auto.scores)
+# print((time.time()-t1))
