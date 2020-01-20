@@ -10,7 +10,15 @@ All results are written to csv file defined in the code , csv_file = "./output/k
 
 estimator = "kmeans"
 config = {"init": "k-means++", "n_clusters": 8, "n_init": 10, "max_iter": 300}
-csv_file = "./output/kmeans_bestmodel.csv"
+
+''' nmi is a flag, when it is set to true the model will only evaluate configurations based on ground truth data
+'''
+nmi = True
+
+if nmi:
+      csv_file = "./output/BestModel/kmeans_bestmodel.csv"
+else:
+      csv_file = "./output/kmeans_eval_out.csv"
 
 count_all=1
 
@@ -32,7 +40,7 @@ count_all*=len(n_init_r)
 
 count=0
 
-nmi = True
+
 for init in init_r:
       for n_clusters in n_clusters_r:
             for max_iter in max_iter_r:
