@@ -67,10 +67,10 @@ class evaluate:
                               print("couldn't load "+dfile)
                                      
                         if self.loaded:
-                              #try:
-                              self.fit_data()
-                              #except:
-                              #      continue
+                              try:
+                                    self.fit_data()
+                              except:
+                                    continue
                               if len(set(list(self.estimator.labels_)))==1:
                                     continue
                               count_train+=1
@@ -79,20 +79,20 @@ class evaluate:
   
                               if len(list(set(self.estimator.labels_)))/len(self.data) >0.75:
                                     continue
-                              #try:
-                              Metric= self.eval_metrics(nmi)
+                              try:
+                                    Metric= self.eval_metrics(nmi)
 
-                              self.res[self.data_label]=Metric
+                                    self.res[self.data_label]=Metric
 
-                              count_test+=1
-                              if verbose:
-                                    print("evaluated "+str(count_load)+" out of "+str(len(allFiles)))
-                                          
-                              #except:
-                              #      print("evaluation problem",self.data_label,self.config)
-                              #      self.failed.write(str(self.data_label)+" " +str(self.config))
-                              #      self.failed.write("\n")
-                              #      self.failed.flush()
+                                    count_test+=1
+                                    if verbose:
+                                          print("evaluated "+str(count_load)+" out of "+str(len(allFiles)))
+                                                
+                              except:
+                                    print("evaluation problem",self.data_label,self.config)
+                                    self.failed.write(str(self.data_label)+" " +str(self.config))
+                                    self.failed.write("\n")
+                                    self.failed.flush()
                                     
                         else:
                               print("model loading failed")
