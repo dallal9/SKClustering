@@ -17,7 +17,7 @@ class kmeans:
     def generate_pop(self, size=1):
         population = []
         for i in range(size):
-            n_clusters = random.choice([2, 60, 70])  # random.choice(list(range(2,min(int(0.3*self.len_data),101))))
+            n_clusters = random.choice(list(range(2, min(int(0.3 * self.len_data), 101))))
             init = random.choice(['k-means++', 'random'])
             algorithm = random.choice(['auto', 'full', 'elkan'])
             n_init = random.choice(list(range(10, 25)))
@@ -339,12 +339,12 @@ class Optics:
             min_samples = random.uniform(0, 1)
             max_eps = random.choice([np.inf, random.uniform(1, 100)])
             metric = random.choice(['chebyshev',
-                                     'cityblock',
-                                     'euclidean',
-                                     'l1',
-                                     'l2',
-                                     'manhattan',
-                                     'minkowski'])
+                                    'cityblock',
+                                    'euclidean',
+                                    'l1',
+                                    'l2',
+                                    'manhattan',
+                                    'minkowski'])
             #                         ['cityblock', 'cosine', 'euclidean',
             #                         'l1', 'l2', 'manhattan', 'braycurtis',
             #                         'canberra', 'chebyshev', 'correlation',
@@ -449,8 +449,8 @@ class BirchClustering:
         if pos <= 2:
             pop[1].branching_factor, pop2[1].branching_factor = pop2[1].branching_factor, pop[1].branching_factor
         if pos <= 1:
-            pop[1].compute_labels, pop2[1].compute_labels = pop2[1].compute_labels, pop[1].compute_label
+            pop[1].compute_labels, pop2[1].compute_labels = pop2[1].compute_labels, pop[1].compute_labels
         if pos == 0:
             pop[1].copy, pop2[1].copy = pop2[1].copy, pop[1].copy
 
-        return pop
+        return pop, pop2

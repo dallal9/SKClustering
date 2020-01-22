@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f9967ef2-bf81-4ba8-94d1-2fd5c27cf219" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Datasets/processed/st900.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Datasets/processed/st900.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Datasets/processed/vehicle.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Datasets/processed/vehicle.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GeneticClus.py" beforeDir="false" afterPath="$PROJECT_DIR$/GeneticClus.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GeneticMethods.py" beforeDir="false" afterPath="$PROJECT_DIR$/GeneticMethods.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cvi.py" beforeDir="false" afterPath="$PROJECT_DIR$/cvi.py" afterDir="false" />
@@ -16,11 +16,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GeneticClus.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="325">
-              <caret line="214" lean-forward="true" selection-start-line="214" selection-end-line="214" />
+            <state relative-caret-position="442">
+              <caret line="224" column="64" selection-start-line="224" selection-start-column="59" selection-end-line="224" selection-end-column="64" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -31,8 +31,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cvi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11050">
-              <caret line="656" column="20" selection-start-line="656" selection-start-column="20" selection-end-line="656" selection-end-column="20" />
+            <state relative-caret-position="13804">
+              <caret line="905" column="29" lean-forward="true" selection-start-line="905" selection-start-column="29" selection-end-line="905" selection-end-column="29" />
               <folding>
                 <element signature="e#730#741#0" expanded="true" />
               </folding>
@@ -40,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GeneticMethods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5746">
-              <caret line="342" column="49" selection-start-line="342" selection-start-column="49" selection-end-line="342" selection-end-column="49" />
+            <state relative-caret-position="1494">
+              <caret line="452" selection-start-line="452" selection-end-line="452" />
               <folding>
                 <element signature="e#0#146#0" expanded="true" />
               </folding>
@@ -84,10 +84,14 @@
       <find>_validat</find>
       <find>_Validat</find>
       <find>sd</find>
-      <find>baker</find>
       <find>ball</find>
       <find>tau</find>
       <find>trace</find>
+      <find>baker</find>
+      <find>trace_</find>
+      <find>pri</find>
+      <find>print</find>
+      <find>__de</find>
     </findStrings>
     <replaceStrings>
       <replace>'</replace>
@@ -113,8 +117,8 @@
         <option value="$PROJECT_DIR$/test_nshan.py" />
         <option value="$PROJECT_DIR$/pordz.py" />
         <option value="$PROJECT_DIR$/GeneticMethods.py" />
-        <option value="$PROJECT_DIR$/cvi.py" />
         <option value="$PROJECT_DIR$/GeneticClus.py" />
+        <option value="$PROJECT_DIR$/cvi.py" />
       </list>
     </option>
   </component>
@@ -129,10 +133,10 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-12" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-11" />
     <option name="width" value="981" />
-    <option name="height" value="1032" />
+    <option name="height" value="1020" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -293,14 +297,14 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="0" width="654" height="688" extended-state="0" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.46601942" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31654677" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31560284" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -309,7 +313,7 @@
       <window_info anchor="bottom" id="Educational.CheckDetails" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32854578" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="11" weight="0.32624114" />
+      <window_info anchor="bottom" id="Python Console" order="11" weight="0.32553956" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -380,8 +384,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GeneticClus.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="214" lean-forward="true" selection-start-line="214" selection-end-line="214" />
+        <state relative-caret-position="442">
+          <caret line="224" column="64" selection-start-line="224" selection-start-column="59" selection-end-line="224" selection-end-column="64" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -390,8 +394,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/cvi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11050">
-          <caret line="656" column="20" selection-start-line="656" selection-start-column="20" selection-end-line="656" selection-end-column="20" />
+        <state relative-caret-position="13804">
+          <caret line="905" column="29" lean-forward="true" selection-start-line="905" selection-start-column="29" selection-end-line="905" selection-end-column="29" />
           <folding>
             <element signature="e#730#741#0" expanded="true" />
           </folding>
@@ -400,8 +404,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GeneticMethods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5746">
-          <caret line="342" column="49" selection-start-line="342" selection-start-column="49" selection-end-line="342" selection-end-column="49" />
+        <state relative-caret-position="1494">
+          <caret line="452" selection-start-line="452" selection-end-line="452" />
           <folding>
             <element signature="e#0#146#0" expanded="true" />
           </folding>

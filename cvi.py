@@ -877,7 +877,7 @@ class Validation:
             temp_c1 = clusterMember1.copy()
             # compute sum of f(x,ci)
             for member in clusterMember1:
-                sumDensity1 += Validation.__density(member, list_centers[i], stdev)
+                sumDensity1 = sumDensity1 + Validation.__density(member, list_centers[i], stdev)
             for j in range(numCluster):
                 if j != i:
                     sumDensity2 = 0
@@ -888,7 +888,7 @@ class Validation:
                     temp_c2 = clusterMember2.copy()
                     # compute sum of f(x,cj)
                     for member in clusterMember2:
-                        sumDensity2 += Validation.__density(member, list_centers[j], stdev)
+                        sumDensity2 = sumDensity2 + Validation.__density(member, list_centers[j], stdev)
                     # compute the middle point of the two cluster centers
                     midPoint = []
                     for k in range(len(list_centers[0])):
@@ -897,7 +897,7 @@ class Validation:
                     midPoint = np.concatenate(midPoint, axis=0)
                     combined = np.concatenate((temp_c1, temp_c2))
                     for member in combined:
-                        sumDensityCombine += Validation.__density(member, midPoint, stdev)
+                        sumDensityCombine = sumDensityCombine + Validation.__density(member, midPoint, stdev)
                     sumTemp = sumTemp + sumDensityCombine / max([sumDensity1, sumDensity2])
             sumDens += sumTemp
         # compute scat and dens_bw
@@ -964,7 +964,7 @@ class Validation:
     def run_list(self, cvi_list=["banfeld_raferty", "modified_hubert_t", "point_biserial", "davies_bouldin", ""]):
         metric_scores = {}
         for key in cvi_list:
-            print(key)
+
             metric_scores[key] = eval("self." + key + "()")
 
         return metric_scores
