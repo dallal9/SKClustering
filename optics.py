@@ -13,6 +13,16 @@ estimator = "optics"
 config = {"min_samples": 5, "cluster_method": "auto", "p": 1, "n_jobs": 1}
 csv_file = "./output/optics_out.csv"
 
+''' nmi is a flag, when it is set to true the model will only evaluate configurations based on ground truth data
+'''
+nmi = True
+
+if nmi:
+      csv_file = "./output/BestModel/optics_bestmodel.csv"
+else:
+      csv_file = "./output/optics_out.csv"
+
+
 count_all=1
 
 min_samples_r = list(range(2, 20))
@@ -35,7 +45,7 @@ for min_samples in min_samples_r:
                 for n_jobs in n_jobs_r:
                     config = {"min_samples": min_samples, "cluster_method": cluster_method, "p": p, "n_jobs": n_jobs}
                     s = evaluate(estimator, config)
-                    s.run_all(verbose=True)
+                    flag = s.run_all(verbose=True,nmi=nmi)
                     out = s.res
                     d = {}
                     # for key in out:
@@ -46,8 +56,10 @@ for min_samples in min_samples_r:
                         d0.update(d1)
 
                         d0.update(config)
-
-                        dcols=["dataset" , "min_samples" , "cluster_method" , "p" , "n_jobs", 'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
+                        if nmi:
+                            dcols=["dataset" , "min_samples" , "cluster_method" , "p" , "n_jobs", 'nmi']
+                        else:
+                            dcols=["dataset" , "min_samples" , "cluster_method" , "p" , "n_jobs", 'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
                         with open(csv_file, 'a', newline='') as csvfile:
                                 writer = csv.DictWriter(
                                     csvfile, delimiter='\t', fieldnames=dcols)
