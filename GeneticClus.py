@@ -8,6 +8,10 @@ from scipy.stats import spearmanr
 from cvi import Validation
 from sdbw import sdbw
 from GeneticMethods import kmeans, meanshift, dbscan, AffinPropagation, SpectralCluster, AgglomerativeCluster, Optics, BirchClustering
+from sklearn.cluster import KMeans, MeanShift, DBSCAN, \
+    AffinityPropagation, SpectralClustering, AgglomerativeClustering, \
+    OPTICS, Birch
+
 from sklearn import metrics
 from operator import itemgetter
 from sklearn.impute import SimpleImputer
@@ -58,7 +62,16 @@ class AutoClus:
         self.size = size
 
         # generate the initial random population
-        self.population = self.generate_pop()
+        population=[]
+        population.append(["meanshift",MeanShift()])
+        population.append(["kmeans",KMeans()])
+        population.append(["dbscan",DBSCAN()])
+        population.append(["affinity_propagation",AffinityPropagation()])
+        population.append(["spectral_clustering",SpectralClustering()])
+        population.append(["agglomerative_clustering",AgglomerativeClustering()])
+        population.append(["optics",OPTICS()])
+        population.append(["birch",Birch()])
+        self.population = self.generate_pop(population=population)
 
         warnings.filterwarnings("ignore")
 
@@ -116,14 +129,14 @@ class AutoClus:
         crossover5 = size // 20
 
         for iteration in range(self.iterations):  # start the optimization
-            print("iteration: ", iteration)
+            
             population = self.population
             new_population = []
 
             vals12 = []  # empty list to store the output for the first two evaluation metrics
             vals3 = []  # empty list to store the output for the third evaluation metric
             indx = []  # empty list to store the index of the successful configuration from the population
-            
+            curr=[]
             for i in range(size):
 
                 try:
@@ -165,6 +178,7 @@ class AutoClus:
                         metric_values["SDBW"] = sdbw_c.sdbw_score()
 
                     indx.append(i)
+                    curr.append(population[i])
                     # first two eval metrics
                     vals12.append([metric_values[cvi1[0]]*cvi1[1], metric_values[cvi2[0]]*cvi2[1]])
                     vals3.append(metric_values[cvi3[0]]*cvi3[1])  # third eval metric
@@ -184,7 +198,8 @@ class AutoClus:
             count = 0
             for l in ndf:
                 for ix in l:
-                    top_20.append(population[indx[ix]])
+                    #top_20.append(population[indx[ix]])
+                    top_20.append(curr[ix])
                     count += 1
                     if count >= offspring20:
                         break
@@ -200,7 +215,7 @@ class AutoClus:
                 score=0.0
 
             self.scores.append(score)  
-
+            print("iteration: ", iteration, self.scores[-1])
             # do cross over
             for c in range(0, crossover5-2, 2):
                 new_population.extend(self.cross_over(top_20[c], top_20[c+1]))
