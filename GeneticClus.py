@@ -116,6 +116,7 @@ class AutoClus:
         crossover5 = size // 20
 
         for iteration in range(self.iterations):  # start the optimization
+            print("iteration: ", iteration)
             population = self.population
             new_population = []
 
@@ -140,40 +141,40 @@ class AutoClus:
                 except:
                      continue
 
-                # try:
-                sample_size = int(len(data)*0.1)  # what is the use of this part???
-                if sample_size < 100:             #
-                    sample_size = len(data)       #
-
-                # some algorithms return cluster labels
-                # where the label numbering starts from -1
-                # we increment such labels with one,
-                # otherwise (in case of the old solution)
-                # we have 0 labels more than needed
-                if -1 in labels:
-                    labels = list(np.array(labels) + 1)
-                # for u in range(len(labels)):
-                #     if labels[u] < 0:
-                #         labels[u] = 0
-
-                # evaluate clustering
-                validate = Validation(np.asmatrix(data).astype(np.float), labels)
-                metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
-                if "SDBW" in [cvi1[0], cvi2[0]]:
-                    sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
-                    metric_values["SDBW"] = sdbw_c.sdbw_score()
-
-                indx.append(i)
-                # first two eval metrics
-                vals12.append([metric_values[cvi1[0]]*cvi1[1], metric_values[cvi2[0]]*cvi2[1]])
-                vals3.append(metric_values[cvi3[0]]*cvi3[1])  # third eval metric
                 try:
-                    self.population[i][2]=metric_values[cvi3[0]]*cvi3[1]
+                    sample_size = int(len(data)*0.1)  # what is the use of this part???
+                    if sample_size < 100:             #
+                        sample_size = len(data)       #
+
+                    # some algorithms return cluster labels
+                    # where the label numbering starts from -1
+                    # we increment such labels with one,
+                    # otherwise (in case of the old solution)
+                    # we have 0 labels more than needed
+                    if -1 in labels:
+                        labels = list(np.array(labels) + 1)
+                    # for u in range(len(labels)):
+                    #     if labels[u] < 0:
+                    #         labels[u] = 0
+
+                    # evaluate clustering
+                    validate = Validation(np.asmatrix(data).astype(np.float), labels)
+                    metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
+                    if "SDBW" in [cvi1[0], cvi2[0]]:
+                        sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
+                        metric_values["SDBW"] = sdbw_c.sdbw_score()
+
+                    indx.append(i)
+                    # first two eval metrics
+                    vals12.append([metric_values[cvi1[0]]*cvi1[1], metric_values[cvi2[0]]*cvi2[1]])
+                    vals3.append(metric_values[cvi3[0]]*cvi3[1])  # third eval metric
+                    try:
+                        self.population[i][2]=metric_values[cvi3[0]]*cvi3[1]
+                    except:
+                        self.population[i].append(metric_values[cvi3[0]]*cvi3[1])
+                    indx.append(i)
                 except:
-                    self.population[i].append(metric_values[cvi3[0]]*cvi3[1])
-                indx.append(i)
-                # except:
-                #     continue
+                    continue
             # pareto front optimization to order the configurations using the two eval metrics
             ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points=vals12)
             ndf.reverse() 
