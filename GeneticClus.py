@@ -216,21 +216,22 @@ class AutoClus:
 
             self.scores.append(score)  
             print("iteration: ", iteration, self.scores[-1])
+            #print(top_20)
             # do cross over
-            for c in range(0, crossover5-2, 2):
-                new_population.extend(self.cross_over(top_20[c], top_20[c+1]))
+            #for c in range(0, crossover5-2, 2):
+            #    new_population.extend(self.cross_over(top_20[c], top_20[c+1]))
 
             # do mutation
-            for m in range(crossover5, offspring20):
-                if random.randint(1, 3) == 1:
-                    new_population.extend(self.mutation([top_20[m]]))
-                else:
-                    new_population.append(top_20[m])
+            #for m in range(crossover5, offspring20):
+            #    if random.randint(1, 3) == 1:
+            #        new_population.extend(self.mutation([top_20[m]]))
+            #    else:
+            #        new_population.append(top_20[m])
 
             self.population = []
 
             # update population and start new iteration
-            self.generate_pop(population=new_population)
+            self.generate_pop(population=top_20)
             
         return top_20  # return the final top 20 solutions
     def get_nmi_score(self,model):

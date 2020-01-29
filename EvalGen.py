@@ -9,16 +9,13 @@ from sklearn.cluster import KMeans, MeanShift, DBSCAN, \
     AffinityPropagation, SpectralClustering, AgglomerativeClustering, \
     OPTICS, Birch
 
+out = open("out.txt","w")
 path="./Datasets/processed/"
 allFiles = glob.glob(path + "*.csv")
-'''
-create file  for cvis
-'''
-'''
-save output
-'''
-allFiles=["./Datasets/processed/iris.csv"]
+
+allFiles=["./Datasets/processed/iris.csv"] # run 
 for file_name in allFiles:
+    out.write("dataset "+str(file_name)+"\n")
     data = pd.read_csv(file_name, header=None,na_values='?')
     y = data.iloc[:,-1]              
     data = data.iloc[:, :-1]
@@ -29,14 +26,19 @@ for file_name in allFiles:
         cvi1=["calinski_harabasz",1],
         cvi2=["davies_bouldin",-1],
         cvi3=["banfeld_raferty",-1],
-        size=50,
-        iterations=3) #initialize class object
+        size=60,
+        iterations=25) #initialize class object
     top_20 = auto.evaluate_pop() #evaluate population and return top 20% after n iterations 
     # print((time.time()-t1))
+    out.write("genetic \n")
     print(auto.scores[-1])
+    out.write("final "+str(auto.scores[-1])+"\n")
+    print("max",max(auto.scores))
+    out.write("max "+str(max(auto.scores))+"\n")
     print(np.mean(auto.scores))
+    out.write("mean "+str(np.mean(auto.scores))+"\n")
     print(np.var(auto.scores))
-
+    out.write("var "+str(np.var(auto.scores))+"\n")
     auto2 = AutoClus(dfile=file_name,
         y=True ,
         cvi1=["i_index",1],
@@ -67,10 +69,12 @@ for file_name in allFiles:
 
         except:
             pass
-
+    out.write("random \n")
     print(max(nmis))
+    out.write("max "+str(max(nmis))+"\n")
+    out.write("final "+str(nmis[-1])+"\n")
     print(np.mean(nmis))
+    out.write("mean "+str(np.mean(nmis))+"\n")
     print(np.var(nmis))
-    print(nmis)
-    print(lables)
-    input("?")
+    out.write("var "+str(np.var(nmis))+"\n")
+
