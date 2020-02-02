@@ -9,8 +9,16 @@ All results are written to csv file defined in the code , csv_file = "./output/A
 '''
 
 estimator = "AffinityPropagation"
-csv_file = "./output/AffinityPropagation_out.csv"
 
+
+''' nmi is a flag, when it is set to true the model will only evaluate configurations based on ground truth data
+'''
+nmi = True
+
+if nmi:
+      csv_file = "./output/BestModel/AffinityPropagation_bestmodel.csv"
+else:
+      csv_file = "./output/AffinityPropagation_out.csv"
 count_all=1
 
 damping_r=[0.5,0.6,0.7,0.8,0.9,1]
@@ -32,7 +40,7 @@ for damping in damping_r:
                 config = {"damping": damping, "convergence_iter": convergence_iter,
                     "max_iter": max_iter}
                 s = evaluate(estimator, config)
-                flag = s.run_all(verbose=True)
+                flag = s.run_all(verbose=True,nmi=nmi)
                 count+=1
                 print("run "+str(count)+" configs out of "+str(count_all))
                 if flag:
@@ -46,8 +54,10 @@ for damping in damping_r:
                             d0.update(d1)
 
                             d0.update(config)
-
-                            dcols=["dataset" , "damping" , "convergence_iter" , "max_iter" ,'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
+                            if nmi:
+                                dcols=dcols=["dataset" , "damping" , "convergence_iter" , "max_iter" ,'nmi']
+                            else:
+                                dcols=["dataset" , "damping" , "convergence_iter" , "max_iter" ,'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
                             with open(csv_file, 'a', newline='') as csvfile:
                                 writer = csv.DictWriter(
                                         csvfile, delimiter='\t', fieldnames=dcols)

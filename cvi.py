@@ -50,7 +50,7 @@ class Validation:
     """
 
     def __init__(self, data, labels):
-        self.data_matrix = data
+        self.data_matrix = np.asmatrix(data).astype(np.float)
         self.class_label = labels
         self.validation = np.nan
         self.description = ''

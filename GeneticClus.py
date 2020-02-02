@@ -1,12 +1,8 @@
 import random
-from sklearn import metrics
 import numpy as np
 import pandas as pd
-import csv
 import pygmo as pg
-from scipy.stats import spearmanr
 from cvi import Validation
-from sdbw import sdbw
 from GeneticMethods import kmeans, meanshift, dbscan, \
     AffinPropagation, SpectralCluster, AgglomerativeCluster, Optics, BirchClustering
 from sklearn import metrics
@@ -79,21 +75,26 @@ class AutoClus:
             size = self.size - len(population)
 
         # clustering algorithms
-        algorithms = ['kmeans',
-                      'meanshift',
-                      'dbscan',
-                      'affinity_propagation',
-                      'spectral_clustering',
-                      'agglomerative_clustering',
-                      'optics',
-                      'birch'
-                      ]
+        algorithms = [
+            'agglomerative_clustering',
+            'dbscan',
+            'meanshift',
+            'affinity_propagation',
+            'spectral_clustering',
+            'optics',
+            'birch',
+            'kmeans'
+          ]
+
+        # algorithms.reverse()
 
         nr_algorithms = len(algorithms)
 
         p = size // nr_algorithms
 
-        population.extend(self.kmeans.generate_pop(p + (size - p * nr_algorithms)))
+        eval('population.extend(self.' +
+             algorithms[0] +
+             '.generate_pop(p + (size - p * nr_algorithms)))')
 
         for algorithm in algorithms[1:]:
             eval('population.extend(self.' +
@@ -115,22 +116,23 @@ class AutoClus:
         # calculate the integer value for the offspring out of the total size (20% out of total population)
         offspring20 = size // 5
         # calculate the integer value for the crossover out of the total size (5%)
-        crossover5 = size // 20
+        nr_crossover = size // 20
 
         for iteration in range(self.iterations):  # start the optimization
             population = self.population
-            new_population = []
 
             vals12 = []  # empty list to store the output for the first two evaluation metrics
             vals3 = []  # empty list to store the output for the third evaluation metric
-            indx = []  # empty list to store the index of the successful configuration from the population
 
+            failed_indices = []
             for i in range(size):
 
                 try:
                     # process the cluster of each configuration in the population
                     clustering = population[i][1].fit(data)
-                except:
+                except Exception as e:
+                    print(population[i][0], e)
+                    failed_indices.append(i)
                     continue
 
                 try:
@@ -138,85 +140,86 @@ class AutoClus:
                     labels = list(clustering.labels_)
                     # if the output has one cluster or n clusters, ignore it
                     if len(set(labels)) == 1 or len(set(labels)) >= (len(data) - 1):
+                        failed_indices.append(i)
                         continue
-                except:
+                except Exception as e:
+                    print('labels ->', e)
+                    failed_indices.append(i)
                     continue
-
-                # try:
-                sample_size = int(len(data) * 0.1)  # what is the use of this part???
-                if sample_size < 100:  #
-                    sample_size = len(data)  #
 
                 # some algorithms return cluster labels
                 # where the label numbering starts from -1
-                # we increment such labels with one,
-                # otherwise (in case of the old solution)
-                # we have 0 labels more than needed
+                # we increment such labels with one
                 if -1 in labels:
                     labels = list(np.array(labels) + 1)
-                # for u in range(len(labels)):
-                #     if labels[u] < 0:
-                #         labels[u] = 0
 
                 # evaluate clustering
-                validate = Validation(np.asmatrix(data).astype(np.float), labels)
-
+                validate = Validation(data, labels)
                 metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
 
-                if "SDBW" in [cvi1[0], cvi2[0]]:
+                if "sdbw" in [cvi1[0], cvi2[0]]:
                     sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
-                    metric_values["SDBW"] = sdbw_c.sdbw_score()
+                    metric_values["sdbw"] = sdbw_c.sdbw_score()
 
-                indx.append(i)
                 # first two eval metrics
                 vals12.append([metric_values[cvi1[0]] * cvi1[1], metric_values[cvi2[0]] * cvi2[1]])
                 vals3.append(metric_values[cvi3[0]] * cvi3[1])  # third eval metric
+
                 try:
-                    self.population[i][2] = metric_values[cvi3[0]] * cvi3[1]
+                    population[i][2] = vals3[-1]
                 except:
-                    self.population[i].append(metric_values[cvi3[0]] * cvi3[1])
-                indx.append(i)
-                # except:
-                #     continue
+                    population[i].append(vals3[-1])
+
+            # removing the failed individuals from the population
+            if failed_indices:
+                for failed in sorted(failed_indices, reverse=True):
+                    population.pop(failed)
+
             # pareto front optimization to order the configurations using the two eval metrics
             ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points=vals12)
             ndf.reverse()
 
-            # get the top 20% from the total population
+            # ## get the top 20% from the total population
             top_20 = []
             count = 0
             for l in ndf:
                 for ix in l:
-                    top_20.append(population[indx[ix]])
+                    top_20.append(population[ix])
                     count += 1
                     if count >= offspring20:
                         break
                 if count >= offspring20:
                     break
 
+            # sorting the individuals w.r.t the third CVI
             top_20 = sorted(top_20, key=itemgetter(2), reverse=True)
+
+            # for alg in top_20:
+            #     print(alg[0], end=' ')
+            # print('\n')
 
             try:
                 score = self.get_nmi_score(top_20[0][1])
-            except:
+            except Exception as e:
+                print('NMI ->', e)
                 score = 0.0
 
             self.scores.append(score)
 
-            # do cross over
-            for c in range(0, crossover5 - 2, 2):
-                new_population.extend(self.cross_over(top_20[c], top_20[c + 1]))
+            crossover_individuals, remaining_individuals = self.do_cross_over(top_20, nr_crossover)
 
-            # do mutation
-            for m in range(crossover5, offspring20):
-                if random.randint(1, 3) == 1:
-                    new_population.extend(self.mutation([top_20[m]]))
-                else:
-                    new_population.append(top_20[m])
+            new_population = []
+            if crossover_individuals:
+                # if crossover was successful
+                new_population.extend(crossover_individuals)
+                # offspring = self.create_copies(remaining_individuals)
+                offspring = 3 * remaining_individuals  # creating 3 copies of each individual
+            else:
+                offspring = 3 * top_20
+                # offspring = self.create_copies(top_20)
 
-            self.population = []
-
-            # update population and start new iteration
+            new_population.extend(self.mutation(offspring))
+            # self.population = new_population
             self.generate_pop(population=new_population)
 
         return top_20  # return the final top 20 solutions
@@ -225,16 +228,94 @@ class AutoClus:
         nmi = metrics.normalized_mutual_info_score(self.y, model.labels_)
         return nmi
 
+    # def create_copies(self, individuals):
+    #     """
+    #     Creates copies of the individuals from top 20 set,
+    #     which were not used in the cross-over phase.
+    #     The resulting list has size equal to the overall size
+    #     of the initial population.
+    #     :param individuals: list of individuals
+    #     :return:
+    #     """
+    #     nr_individuals = len(individuals)
+    #     nr_top = self.size // 5
+    #     if nr_individuals == nr_top:
+    #         # if crossover was not successful
+    #         return 5 * individuals
+    #     else:
+    #         nr_crossovered = nr_top - nr_individuals
+    #         to_be_added = self.size - nr_crossovered
+    #         multiplicator, remainder = to_be_added // nr_individuals, to_be_added % nr_individuals
+    #         copied_individuals = multiplicator * individuals
+    #         if remainder == 0:
+    #             return copied_individuals
+    #         else:
+    #             return copied_individuals + individuals[:remainder]
+
+    def do_cross_over(self, top_20, nr_crossover):
+        """
+        Randomly chooses nr_crossover individuals from the top 20 set,
+        looks for a similar individual (belonging to the same clustering algorithm)
+        and performs crossover on them
+        :param top_20: (list) top 20 individuals from the population
+        :param nr_crossover: (int) the number of individuals to do crossover on
+        :return: (list) resulting individuals after the crossover
+                 (list) the rest of the individuals that were not crossovered
+        """
+        # select nr_crossover individuals from the top_20 independently
+        selected_id = np.random.choice(range(len(top_20)), size=nr_crossover)
+        selected_individuals = [top_20[ind] for ind in selected_id]
+        remaining_individuals = [top_20[ind] for ind in range(len(top_20)) if ind not in selected_id]
+        new_individuals = []
+        # do crossover with other individuals from the same algorithm
+        for individual in selected_individuals:
+            model_name = individual[0]
+            similar_individual = self.choose_pair(remaining_individuals, model_name)
+            if similar_individual is not None:
+                # if there was an individual from the same clustering algorithm
+                new_individuals.extend(self.cross_over(individual, similar_individual))
+            else:
+                # if the selected individual was not paired with another one
+                # adding it to the remaining_individuals list
+                remaining_individuals.append(individual)
+                continue
+
+        return new_individuals, remaining_individuals
+
+    @ staticmethod
+    def choose_pair(remaining_ind, model_name):
+        """
+        Looking for a similar individual to perform crossover
+        :param remaining_ind: (list) the set of candidate individuals
+        :param model_name: (str) the name of the clustering algorithm
+        :return: (list) the chosen individual or
+                None in case the pair was not found
+        """
+        not_found = True
+        i = 0
+        while not_found and i < len(remaining_ind):
+            candidate = remaining_ind[i]
+            candidate_model = candidate[0]
+            if candidate_model == model_name:
+                # found a pair
+                not_found = False
+                chosen_pair = candidate
+                remaining_ind.pop(i)
+            else:
+                i += 1
+                chosen_pair = None
+        return chosen_pair
+
     def cross_over(self, pop1, pop2):
         """
         function to do cross-over between two populations 
         """
-        if pop1[0] != pop2[0]:
-            return None
-        else:
-            model = eval("self." + pop1[0])
-            pop1, pop2 = model.cross_over(pop1, pop2)
-            return [pop1, pop2]
+        # if pop1[0] != pop2[0]:
+        #     return None
+        # else:
+        model = eval("self." + pop1[0])
+        pop1, pop2 = model.cross_over(pop1, pop2)
+        return [pop1, pop2]
 
     def mutation(self, population):
         """
@@ -242,73 +323,51 @@ class AutoClus:
         """
         new_population = []
         for pop in population:
+            # print('before', pop, sep='\n')
             model = eval("self." + pop[0])
-            n_pop = pop[:]
+            n_pop = pop
             n_pop = model.mutate(n_pop)
+            # print('after', n_pop, sep='\n')
             new_population.append(n_pop)
 
         return new_population
 
 
-# cvi_set = [('baker_hubert_gamma', 1),
-#            ('ball_hall', 1),
-#            ('banfeld_raferty', -1),
-#            ('c_index', -1),
-#            ('calinski_harabasz', 1),
-#            ('davies_bouldin', -1),
-#            ('det_ratio', 1),
-#            ('dunns_index', 1),
-#            ('g_plus_index', 1),
-#            ('i_index', -1),
-#            ('ksq_detw_index', 1),
-#            ('log_det_ratio', 1),
-#            ('log_ss_ratio', 1),
-#            ('mc_clain_rao', -1),
-#            ('modified_hubert_t', 1),
-#            ('pbm_index', 1),
-#            ('point_biserial', 1),
-#            ('r_squared', 1),
-#            ('ratkowsky_lance', 1),
-#            ('ray_turi', -1),
-#            ('root_mean_square', 1),
-#            ('s_dbw', -1),
-#            ('scott_symons', -1),
-#            ('tau_index', 1),
-#            ('trace_wib', 1),
-#            ('wemmert_gancarski', 1),
-#            ('trace_w', 1),
-#            ('silhouette', 1),
-#            ('xie_beni', -1)]
-#
-#
-# len_y = len(cvi_set)
-# nr_filters = len_y - 3 + 1
-# for i in range(nr_filters):
-#     # if i in range(26):
-#     #     continue
-#     cvi1, cvi2, cvi3 = cvi_set[i:(3 + i)]
-#     auto = AutoClus(dfile="test.csv",
-#                     cvi1=cvi1,
-#                     cvi2=cvi2,
-#                     cvi3=cvi3,
-#                     iterations=2,
-#                     size=23)  # initialize class object
-#     top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
-#     print(i, 'cvi_done', '\n')
+cvi_set = {'baker_hubert_gamma': 1,
+           'ball_hall': 1,
+           'banfeld_raferty': -1,
+           'c_index': -1,
+           'calinski_harabasz': 1,
+           'davies_bouldin': -1,
+           'det_ratio': 1,
+           'dunns_index': 1,
+           'g_plus_index': 1,
+           'i_index': -1,
+           'ksq_detw_index': 1,
+           'log_det_ratio': 1,
+           'log_ss_ratio': 1,
+           'mc_clain_rao': -1,
+           'modified_hubert_t': 1,
+           'pbm_index': 1,
+           'point_biserial': 1,
+           'r_squared': 1,
+           'ratkowsky_lance': 1,
+           'ray_turi': -1,
+           'root_mean_square': 1,
+           's_dbw': -1,
+           'sdbw': -1,
+           'scott_symons': -1,
+           'tau_index': 1,
+           'trace_wib': 1,
+           'wemmert_gancarski': 1,
+           'trace_w': 1,
+           'silhouette': 1,
+           'xie_beni': -1}
 
-# auto = AutoClus(dfile="test.csv",
-#                 cvi1=cvi1,
-#                 cvi2=cvi2,
-#                 cvi3=cvi3,
-#                 iterations=2,
-#                 size=23)  # initialize class object
-# top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
-# print(i, top_20, '\n')
-
-
-cvi1 = ('s_dbw', -1)
+cvi1 = ('xie_beni', -1)
 cvi2 = ('modified_hubert_t', 1)
 cvi3 = ('banfeld_raferty', -1)
+#
 
 t1 = time.time()
 auto = AutoClus(dfile="./Datasets/processed/hepta.csv",
@@ -316,15 +375,10 @@ auto = AutoClus(dfile="./Datasets/processed/hepta.csv",
                 cvi1=cvi1,
                 cvi2=cvi2,
                 cvi3=cvi3,
-                size=50, iterations=10)  # initialize class object
+                size=80,
+                iterations=10)  # initialize class object
 top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
 print(auto.scores)
+# print(auto.population)
+print(top_20)
 print((time.time() - t1) / 60)
-
-
-# c = [0,0,0,0,1,1,1,1,2,2,2,2]
-# # b = [0,0,0,0,1,1,1,1,2,2,2,2]
-# b = [0,0,0,1,1,1,2,2,2,3,3,3]
-# print(metrics.normalized_mutual_info_score(c, b))
-# # print(numerator / denomenator)
-# print(metrics.accuracy_score(c, b))

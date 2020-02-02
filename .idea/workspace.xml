@@ -2,11 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f9967ef2-bf81-4ba8-94d1-2fd5c27cf219" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Datasets/processed/st900.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Datasets/processed/st900.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Datasets/processed/vehicle.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Datasets/processed/vehicle.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EvalGen.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/default_configs.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/BestModel/AffinityPropagation_bestmodel.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/BestModel/AffinityPropagation_out.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/BestModel/DBSCAN_bestmodel.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/BestModel/SpectralClustering_bestmodel.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/BestModel/kmeans_bestmodel.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/output/BestModel/meanshift_bestmodel.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/EvalClus.py" beforeDir="false" afterPath="$PROJECT_DIR$/EvalClus.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GeneticClus.py" beforeDir="false" afterPath="$PROJECT_DIR$/GeneticClus.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GeneticMethods.py" beforeDir="false" afterPath="$PROJECT_DIR$/GeneticMethods.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cvi.py" beforeDir="false" afterPath="$PROJECT_DIR$/cvi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skAffinityPropagation.py" beforeDir="false" afterPath="$PROJECT_DIR$/skAffinityPropagation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skDBSCAN.py" beforeDir="false" afterPath="$PROJECT_DIR$/skDBSCAN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skSpectralClustering.py" beforeDir="false" afterPath="$PROJECT_DIR$/skSpectralClustering.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skkmeans.py" beforeDir="false" afterPath="$PROJECT_DIR$/skkmeans.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/skmeanshift.py" beforeDir="false" afterPath="$PROJECT_DIR$/skmeanshift.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,11 +29,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GeneticClus.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="224" column="64" selection-start-line="224" selection-start-column="59" selection-end-line="224" selection-end-column="64" />
+            <state relative-caret-position="2961">
+              <caret line="198" selection-start-line="198" selection-end-line="198" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -29,10 +42,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/default_configs.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1972">
+              <caret line="116" selection-start-line="116" selection-end-line="116" />
+              <folding>
+                <element signature="e#0#146#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/cvi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="13804">
-              <caret line="905" column="29" lean-forward="true" selection-start-line="905" selection-start-column="29" selection-end-line="905" selection-end-column="29" />
+            <state relative-caret-position="884">
+              <caret line="142" column="33" selection-start-line="142" selection-start-column="26" selection-end-line="142" selection-end-column="33" />
               <folding>
                 <element signature="e#730#741#0" expanded="true" />
               </folding>
@@ -40,11 +65,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GeneticMethods.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1494">
-              <caret line="452" selection-start-line="452" selection-end-line="452" />
+            <state relative-caret-position="-1419">
+              <caret line="29" column="41" lean-forward="true" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
               <folding>
                 <element signature="e#0#146#0" expanded="true" />
               </folding>
@@ -63,18 +88,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>‘</find>
-      <find>’</find>
-      <find>ban</find>
-      <find>ca</find>
-      <find>dataMatrix</find>
-      <find>generate_pop</find>
-      <find>metrics</find>
-      <find>i_index</find>
-      <find>Metrics</find>
-      <find>self.population</find>
-      <find>self.cvi2</find>
-      <find>self.cvi3</find>
       <find>size+1</find>
       <find>len(population)</find>
       <find>aff</find>
@@ -92,6 +105,19 @@
       <find>pri</find>
       <find>print</find>
       <find>__de</find>
+      <find>mc</find>
+      <find>mc_</find>
+      <find>)</find>
+      <find>(</find>
+      <find>,</find>
+      <find>poin</find>
+      <find>s_d</find>
+      <find>birch</find>
+      <find>metrics</find>
+      <find>L</find>
+      <find>self.L</find>
+      <find>self.L</find>
+      <find>nr_params - 1</find>
     </findStrings>
     <replaceStrings>
       <replace>'</replace>
@@ -106,6 +132,9 @@
       <replace>cvi3</replace>
       <replace>size</replace>
       <replace>&quot;&quot;&quot;</replace>
+      <replace>:</replace>
+      <replace>self.nr_params</replace>
+      <replace>nr_params</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -116,27 +145,17 @@
       <list>
         <option value="$PROJECT_DIR$/test_nshan.py" />
         <option value="$PROJECT_DIR$/pordz.py" />
-        <option value="$PROJECT_DIR$/GeneticMethods.py" />
-        <option value="$PROJECT_DIR$/GeneticClus.py" />
         <option value="$PROJECT_DIR$/cvi.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
-        <option value="$PROJECT_DIR$/.idea/SKClustering.iml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/GeneticMethods.py" />
+        <option value="$PROJECT_DIR$/default_configs.py" />
+        <option value="$PROJECT_DIR$/GeneticClus.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-11" />
-    <option name="width" value="981" />
-    <option name="height" value="1020" />
+    <option name="width" value="980" />
+    <option name="height" value="1031" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -239,6 +258,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="default_configs" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SKClustering" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/default_configs.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="pordz" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SKClustering" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -260,28 +300,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest in pordz.py" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="SKClustering" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_keywords" value="&quot;&quot;" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/pordz.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.GeneticClus" />
-        <item itemvalue="Python.cvi" />
         <item itemvalue="Python.GeneticMethods" />
+        <item itemvalue="Python.default_configs" />
+        <item itemvalue="Python.cvi" />
         <item itemvalue="Python.pordz" />
-        <item itemvalue="Python tests.pytest in pordz.py" />
       </list>
     </recent_temporary>
   </component>
@@ -300,11 +325,12 @@
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.46601942" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.46544877" />
       <window_info id="Structure" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Messages" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31560284" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4574468" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -313,7 +339,7 @@
       <window_info anchor="bottom" id="Educational.CheckDetails" order="8" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32854578" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="11" weight="0.32553956" />
+      <window_info anchor="bottom" id="Python Console" order="11" weight="0.3291367" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -344,13 +370,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/scipy/sparse/linalg/interface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-22">
-          <caret line="336" selection-start-line="336" selection-end-line="336" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/sklearn/manifold/_spectral_embedding.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="82">
@@ -365,13 +384,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/sklearn/externals/_lobpcg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2530">
-          <caret line="504" selection-start-line="504" selection-end-line="504" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pareto.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
@@ -382,20 +394,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GeneticClus.py">
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/sklearn/externals/_lobpcg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="224" column="64" selection-start-line="224" selection-start-column="59" selection-end-line="224" selection-end-column="64" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="6064">
+          <caret line="504" selection-start-line="504" selection-end-line="504" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/scipy/sparse/linalg/interface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1525">
+          <caret line="369" selection-start-line="369" selection-end-line="369" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/cvi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13804">
-          <caret line="905" column="29" lean-forward="true" selection-start-line="905" selection-start-column="29" selection-end-line="905" selection-end-column="29" />
+        <state relative-caret-position="884">
+          <caret line="142" column="33" selection-start-line="142" selection-start-column="26" selection-end-line="142" selection-end-column="33" />
           <folding>
             <element signature="e#730#741#0" expanded="true" />
           </folding>
@@ -404,10 +420,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GeneticMethods.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1494">
-          <caret line="452" selection-start-line="452" selection-end-line="452" />
+        <state relative-caret-position="-1419">
+          <caret line="29" column="41" lean-forward="true" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
           <folding>
             <element signature="e#0#146#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/default_configs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1972">
+          <caret line="116" selection-start-line="116" selection-end-line="116" />
+          <folding>
+            <element signature="e#0#146#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GeneticClus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2961">
+          <caret line="198" selection-start-line="198" selection-end-line="198" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>

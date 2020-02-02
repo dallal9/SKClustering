@@ -26,31 +26,31 @@ class kmeans:
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = len(self.params)
-        pos = random.randint(0, L - 1)
+        nr_params = len(self.params)
+        pos = random.randint(0, nr_params)
 
-        if pos <= 3:
+        if pos in [2, 3]:
             pop[1].n_init = p[1].n_init
         if pos <= 2:
             pop[1].init = p[1].init
         if pos <= 1:
             pop[1].algorithm = p[1].algorithm
-        if pos == 0:
+        if pos in [0, 3]:
             pop[1].n_clusters = p[1].n_clusters
 
         return pop
 
     def cross_over(self, pop, pop2):
-        L = len(self.params)
-        pos = random.randint(0, L - 1)
+        nr_params = len(self.params)
+        pos = random.randint(0, nr_params)
 
-        if pos <= 3:
+        if pos in [2, 3]:
             pop[1].n_init, pop2[1].n_init = pop2[1].n_init, pop[1].n_init
         if pos <= 2:
             pop[1].init, pop2[1].init = pop2[1].init, pop[1].init
         if pos <= 1:
             pop[1].algorithm, pop2[1].algorithm = pop2[1].algorithm, pop[1].algorithm
-        if pos == 0:
+        if pos in [0, 3]:
             pop[1].n_clusters, pop2[1].n_clusters = pop2[1].n_clusters, pop[1].n_clusters
 
         return pop, pop2
@@ -74,33 +74,33 @@ class meanshift:
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = len(self.params)
-        pos = random.randint(0, L - 1)
+        nr_params = len(self.params)
+        pos = random.randint(0, nr_params - 1)
 
-        if pos <= 3:
+        if pos in [2, 3]:
             pop[1].max_iter = p[1].max_iter
         if pos <= 2:
             pop[1].bandwidth = p[1].bandwidth
         if pos <= 1:
             pop[1].bin_seeding = p[1].bin_seeding
-        if pos == 0:
-            pop[1].cluster_all = p[1].cluster_all
+        if pos in [0, 3]:
+            pop[1].cluster_alnr_params = p[1].cluster_all
 
         return pop
 
     def cross_over(self, pop, pop2):
 
-        L = len(self.params)
-        pos = random.randint(0, L - 1)
+        nr_params = len(self.params)
+        pos = random.randint(0, nr_params)
 
-        if pos <= 3:
+        if pos in [2, 3]:
             pop[1].max_iter, pop2[1].max_iter = pop2[1].max_iter, pop[1].max_iter
         if pos <= 2:
             pop[1].bandwidth, pop2[1].bandwidth = pop2[1].bandwidth, pop[1].bandwidth
         if pos <= 1:
             pop[1].bin_seeding, pop2[1].bin_seeding = pop2[1].bin_seeding, pop[1].bin_seeding
-        if pos == 0:
-            pop[1].cluster_all, pop2[1].cluster_all = pop2[1].cluster_all, pop[1].cluster_all
+        if pos in [0, 3]:
+            pop[1].cluster_all, pop2[1].cluster_alnr_params = pop2[1].cluster_all, pop[1].cluster_all
 
         return pop, pop2
 
@@ -117,16 +117,16 @@ class dbscan:
             metric = random.choice(['cityblock', 'euclidean', 'l1', 'l2', 'manhattan'])
             algorithm = random.choice(["auto", "ball_tree", "kd_tree", "brute"])
             leaf_size = random.choice([5, 10, 15, 20, 25, 30, 40, 50, 100, 150, 200])
-            p = leaf_size = random.choice([1, 2, 3])
+            p = random.choice([1, 2, 3])
             population.append(["dbscan", DBSCAN(eps=eps, metric=metric, min_samples=min_samples, algorithm=algorithm,
                                                 leaf_size=leaf_size, p=p)])
         return population
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = len(self.params)
-        pos = random.randint(0, L - 1)
-        if pos <= 5:
+        nr_params = len(self.params)
+        pos = random.randint(0, nr_params - 1)
+        if pos in [2, 3, 4, 5]:
             pop[1].eps = p[1].eps
         if pos <= 4:
             pop[1].metric = p[1].metric
@@ -136,15 +136,15 @@ class dbscan:
             pop[1].algorithm = p[1].algorithm
         if pos <= 1:
             pop[1].leaf_size = p[1].leaf_size
-        if pos == 0:
+        if pos in [0, 3, 5]:
             pop[1].p = p[1].p
 
         return pop
 
     def cross_over(self, pop, pop2):
-        L = len(self.params)
-        pos = random.randint(0, L - 1)
-        if pos <= 5:
+        nr_params = len(self.params)
+        pos = random.randint(0, nr_params)
+        if pos in [2, 3, 4, 5]:
             pop[1].eps, pop2[1].eps = pop2[1].eps, pop[1].eps
         if pos <= 4:
             pop[1].metric, pop2[1].metric = pop2[1].metric, pop[1].metric
@@ -154,7 +154,7 @@ class dbscan:
             pop[1].algorithm, pop2[1].algorithm = pop2[1].algorithm, pop[1].algorithm
         if pos <= 1:
             pop[1].leaf_size, pop2[1].leaf_size = pop2[1].leaf_size, pop[1].leaf_size
-        if pos == 0:
+        if pos in [0, 3, 5]:
             pop[1].p, pop2[1].p = pop2[1].p, pop[1].p
 
         return pop, pop2
@@ -166,8 +166,8 @@ class AffinPropagation:
     """
 
     def __init__(self):
-        self.params = ["damping", "max_iter", "affinity"]
-        self.L = len(self.params)  # number of parameters
+        self.params = ["damping", "max_iter"]
+        self.nr_params = len(self.params)  # number of parameters
 
     @staticmethod
     def generate_pop(size=1):
@@ -181,24 +181,24 @@ class AffinPropagation:
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 1:
-            pop[1].damping = p[1].damping
         if pos == 1:
+            pop[1].damping = p[1].damping
+        if pos == 0:
             pop[1].max_iter = p[1].max_iter
 
         return pop
 
     def cross_over(self, pop, pop2):
         p = pop2
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 1:
-            pop[1].damping, pop2[1].damping = pop2[1].damping, pop[1].damping
         if pos == 1:
+            pop[1].damping, pop2[1].damping = pop2[1].damping, pop[1].damping
+        if pos == 0:
             pop[1].max_iter, p[1].max_iter = pop2[1].max_iter, pop[1].max_iter
 
         return pop, pop2
@@ -206,13 +206,13 @@ class AffinPropagation:
 
 class SpectralCluster:
     """
-    Spectral Clustering
+    Spectranr_params Clustering
     """
 
     def __init__(self):
         self.params = ["n_clusters", "eigen_solver",
                        "n_init", "gamma", "affinity"]
-        self.L = len(self.params)  # number of parameters
+        self.nr_params = len(self.params)  # number of parameters
 
     @staticmethod
     def generate_pop(size=1):
@@ -233,10 +233,10 @@ class SpectralCluster:
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 4:
+        if pos in [1, 2, 3, 4]:
             pop[1].n_clusters = p[1].n_clusters
         if pos <= 3:
             pop[1].eigen_solver = p[1].eigen_solver
@@ -244,17 +244,17 @@ class SpectralCluster:
             pop[1].n_init = p[1].n_init
         if pos <= 1:
             pop[1].gamma = p[1].gamma
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].affinity = p[1].affinity
 
         return pop
 
     def cross_over(self, pop, pop2):
 
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 4:
+        if pos in [1, 2, 3, 4]:
             pop[1].n_clusters, pop2[1].n_clusters = pop2[1].n_clusters, pop[1].n_clusters
         if pos <= 3:
             pop[1].eigen_solver, pop2[1].eigen_solver = pop2[1].eigen_solver, pop2[1].eigen_solver
@@ -262,7 +262,7 @@ class SpectralCluster:
             pop[1].n_init, pop2[1].n_init = pop2[1].n_init, pop[1].n_init
         if pos <= 1:
             pop[1].gamma, pop2[1].gamma = pop2[1].gamma, pop[1].gamma
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].affinity, pop2[1].affinity = pop2[1].affinity, pop[1].affinity
 
         return pop, pop2
@@ -275,7 +275,7 @@ class AgglomerativeCluster:
 
     def __init__(self):
         self.params = ["n_clusters", "linkage", "affinity"]
-        self.L = len(self.params)  # number of parameters
+        self.nr_params = len(self.params)  # number of parameters
 
     @staticmethod
     def generate_pop(size=1):
@@ -296,28 +296,37 @@ class AgglomerativeCluster:
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 2:
+        if pos in [1, 2]:
             pop[1].n_clusters = p[1].n_clusters
         if pos <= 1:
             pop[1].linkage = p[1].linkage
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].affinity = p[1].affinity
+            
+        if pop[1].linkage == 'ward': # Ward can only work with euclidean distances.
+            pop[1].affinity = 'euclidean'
 
         return pop
 
     def cross_over(self, pop, pop2):
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params
+        pos = random.randint(0, nr_params)
 
-        if pos <= 2:
+        if pos in [1, 2]:
             pop[1].n_clusters, pop2[1].n_clusters = pop2[1].n_clusters, pop[1].n_clusters
         if pos <= 1:
             pop[1].linkage, pop2[1].linkage = pop2[1].linkage, pop[1].linkage
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].affinity, pop2[1].affinity = pop2[1].affinity, pop[1].affinity
+    
+        if pop[1].linkage == 'ward': # Ward can only work with euclidean distances.
+            pop[1].affinity = 'euclidean'
+
+        if pop2[1].linkage == 'ward': # Ward can only work with euclidean distances.
+            pop2[1].affinity = 'euclidean'
 
         return pop, pop2
 
@@ -330,7 +339,7 @@ class Optics:
     def __init__(self):
         self.params = ["min_samples", "max_eps", "metric",
                        "cluster_method", "algorithm"]
-        self.L = len(self.params)  # number of parameters
+        self.nr_params = len(self.params)  # number of parameters
 
     @staticmethod
     def generate_pop(size=1):
@@ -364,10 +373,10 @@ class Optics:
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 4:
+        if pos in [1, 2, 3, 4]:
             pop[1].min_samples = p[1].min_samples
         if pos <= 3:
             pop[1].max_eps = p[1].max_eps
@@ -375,17 +384,17 @@ class Optics:
             pop[1].metric = p[1].metric
         if pos <= 1:
             pop[1].cluster_method = p[1].cluster_method
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].algorithm = p[1].algorithm
 
         return pop
 
     def cross_over(self, pop, pop2):
 
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
-        if pos <= 4:
+        if pos in [1, 2, 3, 4]:
             pop[1].min_samples, pop2[1].min_samples = pop2[1].min_samples, pop[1].min_samples
         if pos <= 3:
             pop[1].max_eps, pop2[1].max_eps = pop2[1].max_eps, pop[1].max_eps
@@ -393,7 +402,7 @@ class Optics:
             pop[1].metric, pop2[1].metric = pop2[1].metric, pop[1].metric
         if pos <= 1:
             pop[1].cluster_method, pop2[1].cluster_method = pop2[1].cluster_method, pop[1].cluster_method
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].algorithm, pop[1].algorithm = pop2[1].algorithm, pop[1].algorithm
 
         return pop, pop2
@@ -405,52 +414,75 @@ class BirchClustering:
     """
 
     def __init__(self):
-        self.params = ["threshold", "branching_factor",
+        self.params = ["threshold", "n_clusters", "branching_factor",
                        "compute_labels", "copy"]
-        self.L = len(self.params)  # number of parameters
+        self.nr_params = len(self.params)  # number of parameters
 
     @staticmethod
     def generate_pop(size=1):
         population = []
         for i in range(size):
             threshold = random.uniform(0.2, 2)
-            branching_factor = random.randint(1, 100)
-            compute_labels = random.choice([True, False])
+            branching_factor = random.randint(2, 100)
+            n_clusters = random.randint(2, 100)
+            compute_labels = True
             copy = random.choice([True, False])
 
             population.append(["birch",
-                               Birch(threshold=threshold, branching_factor=branching_factor,
-                                     compute_labels=compute_labels, copy=copy)])
+                               Birch(threshold=threshold,
+                                     branching_factor=branching_factor,
+                                     n_clusters=n_clusters,
+                                     compute_labels=compute_labels,
+                                     copy=copy)])
         return population
 
     def mutate(self, pop):
         p = self.generate_pop(size=1)[0]
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params )
 
-        if pos <= 3:
+        if pos in [1, 2, 3, 4]:
+            pop[1].n_clusters = p[1].n_clusters
+        if pos <= 3 :   # instead of pos <= 3:
             pop[1].threshold = p[1].threshold
         if pos <= 2:
             pop[1].branching_factor = p[1].branching_factor
         if pos <= 1:
             pop[1].compute_labels = p[1].compute_labels
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].copy = p[1].copy
 
         return pop
 
     def cross_over(self, pop, pop2):
 
-        L = self.L
-        pos = random.randint(0, L - 1)
+        nr_params = self.nr_params 
+        pos = random.randint(0, nr_params)
 
+        if pos in [1, 2, 3, 4]:
+            pop[1].n_clusters, pop2[1].n_clusters = pop2[1].n_clusters, pop[1].n_clusters
         if pos <= 3:
             pop[1].threshold, pop2[1].threshold = pop2[1].threshold, pop[1].threshold
         if pos <= 2:
             pop[1].branching_factor, pop2[1].branching_factor = pop2[1].branching_factor, pop[1].branching_factor
         if pos <= 1:
             pop[1].compute_labels, pop2[1].compute_labels = pop2[1].compute_labels, pop[1].compute_labels
-        if pos == 0:
+        if pos in [0, 2]:
             pop[1].copy, pop2[1].copy = pop2[1].copy, pop[1].copy
 
         return pop, pop2
+
+
+# from sklearn.impute import SimpleImputer
+# import pandas as pd
+#
+# data = pd.read_csv("./Datasets/processed/hepta.csv", header=None, na_values='?')
+#
+# if data.isnull().values.any():
+#     imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+#     imp = imp.fit(data)
+#     data = pd.DataFrame(imp.transform(data))
+#
+#
+# model = KMeans().fit(data)
+

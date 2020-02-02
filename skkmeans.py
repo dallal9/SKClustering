@@ -10,7 +10,15 @@ All results are written to csv file defined in the code , csv_file = "./output/k
 
 estimator = "kmeans"
 config = {"init": "k-means++", "n_clusters": 8, "n_init": 10, "max_iter": 300}
-csv_file = "./output/newskmean_out.csv"
+
+''' nmi is a flag, when it is set to true the model will only evaluate configurations based on ground truth data
+'''
+nmi = True
+
+if nmi:
+      csv_file = "./output/BestModel/kmeans_bestmodel.csv"
+else:
+      csv_file = "./output/kmeans_eval_out.csv"
 
 count_all=1
 
@@ -31,6 +39,8 @@ n_init_r=[10]#[2, 10, 50]
 count_all*=len(n_init_r)
 
 count=0
+
+
 for init in init_r:
       for n_clusters in n_clusters_r:
             for max_iter in max_iter_r:
@@ -39,7 +49,7 @@ for init in init_r:
                               config = {"n_clusters": n_clusters, "init": init,
                                     "max_iter": max_iter, "n_init": n_init, "algorithm": algorithm}
                               s = evaluate(estimator, config)
-                              s.run_all(verbose=True)
+                              s.run_all(verbose=True,nmi=nmi)
                               out = s.res
                               d = {}
                               # for key in out:
@@ -50,8 +60,10 @@ for init in init_r:
                                     d0.update(d1)
 
                                     d0.update(config)
-            
-                                    dcols=["dataset" , "n_clusters" , "init" , "max_iter" , "n_init" , "algorithm" ,'Baker_Hubert_Gamma', 'Ball_Hall', 'Banfeld_Raferty', 'Davies_Bouldin', 'Dunns_index', 'McClain_Rao', 'PBM_index', 'Ratkowsky_Lance', 'Ray_Turi', 'Scott_Symons', 'Wemmert_Gancarski', 'Xie_Beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'IIndex', 'SDBW', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
+                                    if nmi: 
+                                          dcols=["dataset" , "n_clusters" , "init" , "max_iter" , "n_init" , "algorithm" ,'nmi']
+                                    else:
+                                          dcols=["dataset" , "n_clusters" , "init" , "max_iter" , "n_init" , "algorithm" ,'baker_hubert_gamma', 'ball_hall', 'ratkowsky_lance', 'davies_bouldin', 'dunns_index', 'mcclain_rao', 'pbm_index', 'ratkowsky_lance', 'ray_turi', 'scott_symons', 'wemmert_gancarski', 'xie_beni', 'c_index', 'det_ratio', 'g_plus_index', 'i_index', 'ksq_detw_index', 'log_det_ratio', 'log_ss_ratio', 'modified_hubert_t', 'point_biserial', 'r_squared', 'root_mean_square',  's_dbw', 'silhouette', 'tau_index', 'trace_w', 'trace_wib', 'iindex', 'sdbw', 'ari', 'ami', 'nmi','v_measure','silhouette_score','calinski_harabasz_score']
                                     with open(csv_file, 'a', newline='') as csvfile:
                                           writer = csv.DictWriter(
                                                 csvfile, delimiter='\t', fieldnames=dcols)
@@ -63,5 +75,6 @@ for init in init_r:
                                           
                                           writer.writerow(dwrite)
                                           csvfile.flush()
+
                               count+=1
                               print("run "+str(count)+" configs out of "+str(count_all))
