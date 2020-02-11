@@ -3,8 +3,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.distance import euclidean
 from sklearn.cluster import KMeans
-
-
+import math
 
 class sdbw:
     def __init__(self, X, Y, centroids):
@@ -89,9 +88,11 @@ class sdbw:
         pair_centroid = (c_1 + c_2)/2
         denom = np.max([self.gamma(sigma, a, b, c_1), self.gamma(sigma, a, b, c_2)])
         res = self.gamma(sigma, a, b, pair_centroid)/denom
-
+        if math.isnan(res):
+            res = 0.0
         return res
 
 
     def sdbw_score(self):
+
         return self.scatter() + self.density()

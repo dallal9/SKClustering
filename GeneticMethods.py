@@ -14,7 +14,7 @@ class kmeans:
     def generate_pop(self,size=1):
         population=[]
         for i in range(size):
-            n_clusters=random.choice(list(range(2,min(int(0.3*self.len_data),101))))
+            n_clusters=random.choice(list(range(2,min(int(0.1*self.len_data),41))))
             init =  random.choice(['k-means++', 'random'])
             algorithm =  random.choice(['auto', 'full', 'elkan'])
             n_init = random.choice(list(range(10,25)))
