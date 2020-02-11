@@ -1,12 +1,12 @@
-dataset,cvi,algorithm,nmi
-2d-20c-no0,"['point_biserial', 'mc_clain_rao', 'banfeld_raferty']",kmeans,0.8164181333626616
-2d-4c-no9,"['calinski_harabasz', 'ratkowsky_lance', 'banfeld_raferty']",kmeans,0.4822109310472387
-3MC,"['i_index', 'modified_hubert_t', 'banfeld_raferty']",kmeans,0.3991291593294212
-aggregation,"['calinski_harabasz', 'pbm_index', 'banfeld_raferty']",kmeans,0.4963793389990599
-blobs,"['i_index', 'davies_bouldin', 'banfeld_raferty']",kmeans,0.3872524864574249
-cassini,"['silhouette', 'i_index', 'banfeld_raferty']",kmeans,0.3847669316343395
-cuboids,"['ratkowsky_lance', 'banfeld_raferty', 'davies_bouldin']",kmeans,0.48919636452428866
-cure-t1-2000n-2D,"['point_biserial', 'i_index', 'banfeld_raferty']",kmeans,0.4924096481554521
-curves1,"['c_index', 'ratkowsky_lance', 'banfeld_raferty']",kmeans,0.26678135742207837
-d31,"['point_biserial', 'c_index', 'banfeld_raferty']",kmeans,0.8520286843259162
-dartboard2,"['i_index', 'modified_hubert_t', 'banfeld_raferty']",kmeans,0.3798406016533301
+dataset,cvi,algorithm,nmi,time_taken
+2d-20c-no0,"['point_biserial', 'mc_clain_rao', 'banfeld_raferty']",kmeans,0.8089041539101395,30.40065518765
+2d-4c-no9,"['calinski_harabasz', 'ratkowsky_lance', 'banfeld_raferty']",affinity_propagation,0.5703327711524323,15.086912602383332
+3MC,"['i_index', 'modified_hubert_t', 'banfeld_raferty']",kmeans,0.39314022779094315,28.18858954031667
+aggregation,"['calinski_harabasz', 'pbm_index', 'banfeld_raferty']",affinity_propagation,0.7309257631317589,10.35832353423334
+blobs,"['i_index', 'davies_bouldin', 'banfeld_raferty']",kmeans,0.38530411341647175,7.334319634816681
+cassini,"['silhouette', 'i_index', 'banfeld_raferty']",kmeans,0.3819193803767199,10.42724389115001
+cuboids,"['ratkowsky_lance', 'banfeld_raferty', 'davies_bouldin']",affinity_propagation,0.7470955161636826,17.90626908261667
+cure-t1-2000n-2D,"['point_biserial', 'i_index', 'banfeld_raferty']",spectral_clustering,0.475498605522679,44.685260780833325
+curves1,"['c_index', 'ratkowsky_lance', 'banfeld_raferty']",spectral_clustering,0.36285679441561536,13.973236569833322
+d31,"['point_biserial', 'c_index', 'banfeld_raferty']",kmeans,0.8552431590608077,158.24829136081664
+dartboard2,"['i_index', 'modified_hubert_t', 'banfeld_raferty']",kmeans,0.40101908629137556,141.16864032916666

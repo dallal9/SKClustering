@@ -8,6 +8,7 @@ from GeneticMethods import kmeans, meanshift, dbscan, \
 from sklearn import metrics
 from operator import itemgetter
 from sklearn.impute import SimpleImputer
+from sdbw import sdbw
 import time
 import warnings
 
@@ -157,9 +158,13 @@ class AutoClus:
                 validate = Validation(data, labels)
                 metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
 
-                if "sdbw" in [cvi1[0], cvi2[0]]:
-                    sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
-                    metric_values["sdbw"] = sdbw_c.sdbw_score()
+                if "sdbw" in [cvi1[0], cvi2[0], cvi3[0]]:
+                    if population[i][0] in ['agglomerative_clustering', 'dbscan']:
+                        # AgglomerativeClustering' object has no attribute 'cluster_centers_'
+                        continue
+                    else:
+                        sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
+                        metric_values["sdbw"] = sdbw_c.sdbw_score()
 
                 # first two eval metrics
                 vals12.append([metric_values[cvi1[0]] * cvi1[1], metric_values[cvi2[0]] * cvi2[1]])
@@ -364,21 +369,21 @@ cvi_set = {'baker_hubert_gamma': 1,
            'silhouette': 1,
            'xie_beni': -1}
 
-cvi1 = ('xie_beni', -1)
-cvi2 = ('modified_hubert_t', 1)
-cvi3 = ('banfeld_raferty', -1)
+# cvi1 = ('xie_beni', -1)
+# cvi2 = ('modified_hubert_t', 1)
+# cvi3 = ('banfeld_raferty', -1)
+# #
 #
-
-t1 = time.time()
-auto = AutoClus(dfile="./Datasets/processed/hepta.csv",
-                y=True,
-                cvi1=cvi1,
-                cvi2=cvi2,
-                cvi3=cvi3,
-                size=80,
-                iterations=10)  # initialize class object
-top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
-print(auto.scores)
-# print(auto.population)
-print(top_20)
-print((time.time() - t1) / 60)
+# t1 = time.time()
+# auto = AutoClus(dfile="./Datasets/processed/hepta.csv",
+#                 y=True,
+#                 cvi1=cvi1,
+#                 cvi2=cvi2,
+#                 cvi3=cvi3,
+#                 size=80,
+#                 iterations=10)  # initialize class object
+# top_20 = auto.evaluate_pop()  # evaluate population and return top 20% after n iterations
+# print(auto.scores)
+# # print(auto.population)
+# print(top_20)
+# print((time.time() - t1) / 60)

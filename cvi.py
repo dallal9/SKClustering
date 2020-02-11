@@ -964,7 +964,9 @@ class Validation:
     def run_list(self, cvi_list=["banfeld_raferty", "modified_hubert_t", "point_biserial", "davies_bouldin", ""]):
         metric_scores = {}
         for key in cvi_list:
-
-            metric_scores[key] = eval("self." + key + "()")
+            if key == 'sdbw':
+                continue
+            else:
+                metric_scores[key] = eval("self." + key + "()")
 
         return metric_scores

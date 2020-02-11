@@ -1,0 +1,7 @@
+dataset,cvi,algorithm,nmi,time_taken
+2d-20c-no0,"['point_biserial', 'mc_clain_rao', 'banfeld_raferty']",kmeans,0.7912431031723325,35.43936890115
+2d-4c-no9,"['calinski_harabasz', 'ratkowsky_lance', 'banfeld_raferty']",affinity_propagation,0.6349720175774356,11.18822166461667
+3MC,"['i_index', 'modified_hubert_t', 'banfeld_raferty']",kmeans,0.38991884645401315,30.865672639149995
+aggregation,"['calinski_harabasz', 'pbm_index', 'banfeld_raferty']",affinity_propagation,0.6348301617955106,7.567810148516658
+blobs,"['i_index', 'davies_bouldin', 'banfeld_raferty']",kmeans,0.400110828665265,6.545633411383323
+cassini,"['silhouette', 'i_index', 'banfeld_raferty']",kmeans,0.38283461754495035,7.7224513685
