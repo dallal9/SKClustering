@@ -18,8 +18,11 @@ path="./Datasets/processed/"
 allFiles=['glass','iono','DS-850','cure-t1-2000n-2D','threenorm','compound','complex9','cluto-t5-8k','complex8','chainlink','wingnut','pathbased','impossible','xclara','disk-4000n','simplex','dense-disk-3000','fourty','smile2','ds850','cure-t0-2000n-2D','cluto-t7-10k','smile3','disk-5000n','jain','smile1','spiral','2dnormals','sonar','triangle1','disk-4600n','sizes3','sizes2','DS-577','atom','long1','dartboard1','flame','triangle2']
 for label  in allFiles:
     file_name=path+label+".csv"
-    benz = CVIPro(file_name, "distance")
-    cvi1,cvi2,cvi3=    eval(benz.nn_search())
+    try:
+        benz = CVIPro(file_name, "distance")
+        cvi1,cvi2,cvi3=    eval(benz.nn_search())
+    except:
+        cvi1,cvi2,cvi3="SDBW","modified_hubert_t","banfeld_raferty"
     data = pd.read_csv(file_name, header=None,na_values='?')
     y = data.iloc[:,-1]              
     data = data.iloc[:, :-1]
@@ -65,11 +68,13 @@ for label  in allFiles:
             nmis.append(nmi)
             labels.append(model[0])
             t.append([nmi,model[0],model[1]])
+            t=sorted(t, key=itemgetter(0),reverse=True)
 
         except:
             pass
 
 
-        out = open("output/evaluation/out.csv","a",newline='')
-        writer = csv.writer(out,delimiter='\t')
-        writer.writerow([label,auto.scores[-1],max(auto.scores),np.mean(auto.scores),np.var(auto.scores),str(top_20[0][1]).replace('\n', ' '),max(nmis),np.mean(nmis),np.var(nmis),str(t[0]).replace('\n', ' ')])
+    out = open("output/evaluation/out.csv","a",newline='')
+    writer = csv.writer(out,delimiter='\t')
+    writer.writerow([label,auto.scores[-1],max(auto.scores),np.mean(auto.scores),np.var(auto.scores),str(top_20[0][1]).replace('\n', ' '),max(nmis),np.mean(nmis),np.var(nmis),str(t[0]).replace('\n', ' ')])
+    out.flush()
