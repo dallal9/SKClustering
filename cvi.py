@@ -95,35 +95,68 @@ class Validation:
         self.validation = sum_total / num_cluster
         return self.validation
 
+    # def banfeld_raferty(self):
+    #     """ Banfeld-Raferty index is the weighted sum of the logarithms
+    #      of the traces of the variance-covariance matrix of each cluster
+    #     """
+    #     self.description = 'Weighted sum of the logarithms of the traces of ' \
+    #                        'the variance-covariance matrix of each cluster'
+    #     sum_total = 0
+    #     labels = np.array(self.class_label)
+    #     num_cluster = max(labels) + 1
+    #
+    #     # iterate through all the clusters
+    #     for i in range(num_cluster):
+    #         sum_dis = 0
+    #         # indices = [t for t, x in enumerate(self.class_label) if x == i]
+    #         indices = labels == i
+    #         cluster_member = self.data_matrix[indices, :]
+    #
+    #         # compute the center of the cluster
+    #         cluster_center = np.mean(cluster_member, axis=0)
+    #
+    #         if len(indices) == 0:
+    #             continue
+    #
+    #         # iterate through all the members
+    #         for member in cluster_member:
+    #             sum_dis += distance.euclidean(member, cluster_center) ** 2
+    #         if sum_dis / len(indices) <= 0:
+    #             warnings.warn('Cannot calculate Banfeld_Raferty, due to an undefined value', UserWarning)
+    #         else:
+    #             sum_total += len(indices) * math.log(sum_dis / len(indices))
+    #
+    #             # return the fitness
+    #             self.validation = sum_total
+    #     return self.validation
+
     def banfeld_raferty(self):
-        """ Banfeld-Raferty index is the weighted sum of the logarithms
-         of the traces of the variance-covariance matrix of each cluster
-        """
-        self.description = 'Weighted sum of the logarithms of the traces of ' \
-                           'the variance-covariance matrix of each cluster'
+
         sum_total = 0
-        num_cluster = max(self.class_label) + 1
+        labels = np.array(self.class_label)
+        num_cluster = max(labels) + 1
 
         # iterate through all the clusters
         for i in range(num_cluster):
-            sum_dis = 0
-            indices = [t for t, x in enumerate(self.class_label) if x == i]
-            cluster_member = self.data_matrix[indices, :]
+            indices = labels == i
+            data_cluster = self.data_matrix[indices, :]
+            n_k = sum(indices)
 
-            # compute the center of the cluster
-            cluster_center = np.mean(cluster_member, 0)
+            if n_k == 0:
+                continue
 
-            # iterate through all the members
-            for member in cluster_member:
-                sum_dis += distance.euclidean(member, cluster_center) ** 2
-            if sum_dis / len(indices) <= 0:
-                warnings.warn('Cannot calculate Banfeld_Raferty, due to an undefined value', UserWarning)
+            if n_k == 1:
+                # diag requires an array of at least two dimensions
+                w_k = np.float(np.cov(data_cluster))
             else:
-                sum_total += len(indices) * math.log(sum_dis / len(indices))
+                w_k = np.trace(np.cov(data_cluster))
 
-                # return the fitness
-                self.validation = sum_total
-        return self.validation
+            if w_k == 0:
+                continue
+
+            sum_total += n_k * np.log(w_k / n_k)
+
+        return sum_total
 
     def silhouette(self):
         """

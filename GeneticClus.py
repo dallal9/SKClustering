@@ -120,19 +120,24 @@ class AutoClus:
         nr_crossover = size // 20
 
         for iteration in range(self.iterations):  # start the optimization
+            print('\n', 'Iteration', iteration+1, '\n')
+
             population = self.population
 
             vals12 = []  # empty list to store the output for the first two evaluation metrics
             vals3 = []  # empty list to store the output for the third evaluation metric
 
             failed_indices = []
+
             for i in range(size):
+
+                print('=', end='')
 
                 try:
                     # process the cluster of each configuration in the population
                     clustering = population[i][1].fit(data)
                 except Exception as e:
-                    print(population[i][0], e)
+                    # print(population[i][0], e)
                     failed_indices.append(i)
                     continue
 
@@ -140,11 +145,12 @@ class AutoClus:
                     # get the clustering labels
                     labels = list(clustering.labels_)
                     # if the output has one cluster or n clusters, ignore it
-                    if len(set(labels)) == 1 or len(set(labels)) >= (len(data) - 1):
+                    nr_labels = len(set(labels))
+                    if nr_labels == 1 or nr_labels >= (len(data) - 1):
                         failed_indices.append(i)
                         continue
                 except Exception as e:
-                    print('labels ->', e)
+                    # print('labels ->', e)
                     failed_indices.append(i)
                     continue
 
@@ -159,11 +165,17 @@ class AutoClus:
                 metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
 
                 if "sdbw" in [cvi1[0], cvi2[0], cvi3[0]]:
-                    if population[i][0] in ['agglomerative_clustering', 'dbscan']:
+
+                    if population[i][0] in ['agglomerative_clustering', 'dbscan',
+                                            'spectral_clustering', 'birch', 'optics']:
                         # AgglomerativeClustering' object has no attribute 'cluster_centers_'
+                        centroids = self.get_cluster_centers(data, labels)
+                    else:
+                        centroids = clustering.cluster_centers_
+                    if len(centroids) <= 1:
                         continue
                     else:
-                        sdbw_c = sdbw(data, clustering.labels_, clustering.cluster_centers_)
+                        sdbw_c = sdbw(data, labels, centroids)
                         metric_values["sdbw"] = sdbw_c.sdbw_score()
 
                 # first two eval metrics
@@ -206,7 +218,7 @@ class AutoClus:
             try:
                 score = self.get_nmi_score(top_20[0][1])
             except Exception as e:
-                print('NMI ->', e)
+                # print('NMI ->', e)
                 score = 0.0
 
             self.scores.append(score)
@@ -232,6 +244,11 @@ class AutoClus:
     def get_nmi_score(self, model):
         nmi = metrics.normalized_mutual_info_score(self.y, model.labels_)
         return nmi
+
+    @staticmethod
+    def get_cluster_centers(data, labels):
+        labels = np.array(labels)
+        return np.array([np.mean(data[labels == k], axis=0) for k in range(max(labels)+1)])
 
     # def create_copies(self, individuals):
     #     """
