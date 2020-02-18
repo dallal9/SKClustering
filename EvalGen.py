@@ -19,8 +19,8 @@ path="./Datasets/processed/"
 allFiles=["glass"]#['cluto-t5-8k','complex8','chainlink','wingnut','pathbased','impossible','xclara','disk-4000n','simplex','dense-disk-3000','fourty','smile2','ds850','cure-t0-2000n-2D','cluto-t7-10k','smile3','disk-5000n','jain','smile1','spiral','2dnormals','sonar','triangle1','disk-4600n','sizes3','sizes2','DS-577','atom','long1','dartboard1','flame','triangle2','complex9','glass','iono','DS-850','cure-t1-2000n-2D','threenorm','compound']
 for label  in allFiles:
     file_name=path+label+".csv"
-    if pred:
-        lol        
+    pred = True
+    if pred:       
         benz = CVIPro(file_name, "distance")
         cvi1,cvi2,cvi3=    eval(benz.nn_search())
     else:
