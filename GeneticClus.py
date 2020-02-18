@@ -83,13 +83,13 @@ class AutoClus:
         population=[]
         
         population.append(["kmeans",KMeans()])
-        population.append(["dbscan",DBSCAN()])
-        population.append(["affinity_propagation",AffinityPropagation()])
-        population.append(["spectral_clustering",SpectralClustering()])
+        #population.append(["dbscan",DBSCAN()])
+        #population.append(["affinity_propagation",AffinityPropagation()])
+        #population.append(["spectral_clustering",SpectralClustering()])
         population.append(["agglomerative_clustering",AgglomerativeClustering()])
-        population.append(["optics",OPTICS()])
-        population.append(["birch",Birch()])
-        population.append(["meanshift",MeanShift()])
+        #population.append(["optics",OPTICS()])
+        #population.append(["birch",Birch()])
+        #population.append(["meanshift",MeanShift()])
 
 
         self.population = self.generate_pop(population=population)
@@ -109,6 +109,7 @@ class AutoClus:
             size = self.size - len(population)
         
         # clustering algorithms
+        
         algorithms = ['kmeans',
                       'meanshift',
                       'dbscan',
@@ -118,7 +119,11 @@ class AutoClus:
                        'optics',
                        'birch'
                       ]
+        algorithms = ['kmeans',
+                       'agglomerative_clustering'
 
+                      ]
+        
         nr_algorithms = len(algorithms)
 
         p = size // nr_algorithms
@@ -129,7 +134,8 @@ class AutoClus:
             eval('population.extend(self.' +
                  algorithm +
                  '.generate_pop(p))')
-
+        
+        
         self.population = population
         
         return population
@@ -148,18 +154,18 @@ class AutoClus:
         offspring20 = size // 5
         # calculate the integer value for the crossover out of the total size (5%)
         crossover5 = size // 20
-
+        log=open("log.txt","w")
         for iteration in range(self.iterations):  # start the optimization
             
             population = self.population
-            new_population = []
 
+         
             vals12 = []  # empty list to store the output for the first two evaluation metrics
             vals3 = []  # empty list to store the output for the third evaluation metric
             indx = []  # empty list to store the index of the successful configuration from the population
             curr=[]
             for i in range(size):
-                if len(population[i]) <= 2:
+                if len(population[i]) <= 10:
                     try:
                     # process the cluster of each configuration in the population
                         clustering = population[i][1].fit(data)
@@ -193,7 +199,7 @@ class AutoClus:
 
                         # evaluate clustering
                         validate = Validation(np.asmatrix(data).astype(np.float), labels)
-                        metric_values = validate.run_list([cvi1[0], cvi2[0], cvi3[0]])
+                        metric_values = validate.run_list(list(set([cvi1[0], cvi2[0], cvi3[0]])))
                         
                         if "SDBW" in [cvi1[0], cvi2[0]]:
                             sdbw_c = sdbw(np.asmatrix(data).astype(np.float), clustering.labels_, clustering.cluster_centers_)
@@ -226,6 +232,24 @@ class AutoClus:
                 indx.append(i)
 
             # pareto front optimization to order the configurations using the two eval metrics
+            vals12=np.array(vals12)
+            l1 = vals12[:,0]
+            min1=min(l1)
+            max1=max(l1)
+            for i in range(len(l1)):
+                l1[i]=(l1[i]-min1)/(max1-min1)
+            
+
+            l2= vals12[:,1]
+            min2=min(l2)
+            max2=max(l2)
+            for i in range(len(l2)):
+                l2[i]=(l2[i]-min2)/(max2-min2)
+            
+            for i in range(len(l2)):
+                vals12[i]=[l1[i],l2[i]]
+            
+            
             ndf, dl, dc, ndr = pg.fast_non_dominated_sorting(points=vals12)
             ndf.reverse() 
 
@@ -254,6 +278,11 @@ class AutoClus:
                 
             except:
                 score=0.0
+
+            log.write("iteration=> "+str(iteration)+"\n")
+            for pops in top_20:
+                log.write(str(pops).replace('\n', ' ')+"\n")
+            new_population = []
 
             self.scores.append(score)  
             print("iteration: ", iteration, self.scores[-1],top_20[0])

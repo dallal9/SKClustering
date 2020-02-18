@@ -10,19 +10,33 @@ from get_cvi import CVIPro
 from sklearn.cluster import KMeans, MeanShift, DBSCAN, \
     AffinityPropagation, SpectralClustering, AgglomerativeClustering, \
     OPTICS, Birch
+import random
 
 
 path="./Datasets/processed/"
 #allFiles = glob.glob(path + "*.csv")
 
-allFiles=['glass','iono','DS-850','cure-t1-2000n-2D','threenorm','compound','complex9','cluto-t5-8k','complex8','chainlink','wingnut','pathbased','impossible','xclara','disk-4000n','simplex','dense-disk-3000','fourty','smile2','ds850','cure-t0-2000n-2D','cluto-t7-10k','smile3','disk-5000n','jain','smile1','spiral','2dnormals','sonar','triangle1','disk-4600n','sizes3','sizes2','DS-577','atom','long1','dartboard1','flame','triangle2']
+allFiles=["glass"]#['cluto-t5-8k','complex8','chainlink','wingnut','pathbased','impossible','xclara','disk-4000n','simplex','dense-disk-3000','fourty','smile2','ds850','cure-t0-2000n-2D','cluto-t7-10k','smile3','disk-5000n','jain','smile1','spiral','2dnormals','sonar','triangle1','disk-4600n','sizes3','sizes2','DS-577','atom','long1','dartboard1','flame','triangle2','complex9','glass','iono','DS-850','cure-t1-2000n-2D','threenorm','compound']
 for label  in allFiles:
     file_name=path+label+".csv"
-    try:
+    if pred:
+        lol        
         benz = CVIPro(file_name, "distance")
         cvi1,cvi2,cvi3=    eval(benz.nn_search())
-    except:
-        cvi1,cvi2,cvi3="SDBW","modified_hubert_t","banfeld_raferty"
+    else:
+        '''random
+        eval_labels={"banfeld_raferty":-1,"davies_bouldin":-1,"dunns_index":1,"mcclain_rao":-1,"pbm_index":1,"ratkowsky_lance":1,"ray_turi":-1,"scott_symons":-1,"xie_beni":-1,"c_index":-1,"i_index":1,"modified_hubert_t":1,"point_biserial":1,"s_dbw":-1,"silhouette":1,"iindex":1,"SDBW":-1,"calinski_harabasz":1}
+        cvis=list(eval_labels.keys())
+        cvi1=random.choice(cvis)
+        cvi2=random.choice(cvis)
+        while cvi2 == cvi1:
+            cvi2=random.choice(cvis)
+        cvi3=random.choice(cvis)
+        while cvi3 in [cvi1,cvi2]:
+            cvi3=random.choice(cvis)
+        '''        
+        cvi1,cvi2,cvi3="i_index","scott_symons","pbm_index"#"SDBW","modified_hubert_t","banfeld_raferty"
+        print(cvi1,cvi2,cvi3)
     data = pd.read_csv(file_name, header=None,na_values='?')
     y = data.iloc[:,-1]              
     data = data.iloc[:, :-1]
@@ -33,8 +47,8 @@ for label  in allFiles:
         cvi1=[cvi1],
         cvi2=[cvi2],
         cvi3=[cvi3],
-        size=35,
-        iterations=10,
+        size=100,
+        iterations=50,
         label=label) #initialize class object
     top_20 = auto.evaluate_pop() #evaluate population and return top 20% after n iterations 
     # print((time.time()-t1))
@@ -49,14 +63,14 @@ for label  in allFiles:
     auto2.size=8
     auto2.population=[]
     models = auto2.generate_pop(population=[])
-    models.append(["meanshift1",MeanShift()])
+    #models.append(["meanshift1",MeanShift()])
     models.append(["KMeans1",KMeans()])
-    models.append(["DBSCAN1",DBSCAN()])
-    models.append(["AffinityPropagation1",AffinityPropagation()])
-    models.append(["SpectralClustering1",SpectralClustering()])
+    #models.append(["DBSCAN1",DBSCAN()])
+    #models.append(["AffinityPropagation1",AffinityPropagation()])
+    #models.append(["SpectralClustering1",SpectralClustering()])
     models.append(["AgglomerativeClustering1",AgglomerativeClustering()])
-    models.append(["OPTICS1",OPTICS()])
-    models.append(["Birch1",Birch()])
+    #models.append(["OPTICS1",OPTICS()])
+    #models.append(["Birch1",Birch()])
 
     nmis=[]
     labels=[]
